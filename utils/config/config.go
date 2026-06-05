@@ -13,6 +13,7 @@ type Settings struct {
 	project_name        string
 	project_url         string
 	request_packge_name string
+	version             string
 }
 
 var settings Settings
@@ -30,6 +31,7 @@ func init() {
 	settings.wiki_url = env_reader.GetEnvString("WIKI_URL", "https://en.wikipedia.org/w/api.php")
 	settings.email = env_reader.GetEnvString("EMAIL", "example@example.com")
 	settings.project_name = env_reader.GetEnvString("PROJECT_NAME", "WikiSpider")
+	settings.version = env_reader.GetEnvString("VERSION", "0.1.0")
 	settings.project_url = env_reader.GetEnvString("PROJECT_URL", "https://github.com/1Vewton/WikiSpider")
 	settings.request_packge_name = env_reader.GetEnvString("REQUEST_PACKGE_NAME", "Go-http-client/1.1")
 	// Log the success message
@@ -59,4 +61,9 @@ func GetProjectUrl() string {
 // Get request package name
 func GetRequestPackageName() string {
 	return settings.request_packge_name
+}
+
+// Get version
+func GetVersion() string {
+	return settings.version
 }
