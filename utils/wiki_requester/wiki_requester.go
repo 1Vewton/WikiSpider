@@ -25,7 +25,7 @@ type Normalized struct {
 
 // Data structure of query
 type Query struct {
-	Normalized Normalized       `json:"normalized"`
+	Normalized []Normalized     `json:"normalized"`
 	Pages      map[string]Pages `json:"pages"`
 }
 
