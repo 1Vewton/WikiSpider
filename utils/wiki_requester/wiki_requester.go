@@ -7,7 +7,10 @@ import (
 
 	"github.com/1Vewton/WikiSpider/utils/config"
 	"github.com/1Vewton/WikiSpider/utils/construct_ua"
+	"github.com/1Vewton/WikiSpider/utils/logger"
 )
+
+var service_logger = logger.NewLogger("WikiRequester")
 
 // Data structure of a single page
 type Pages struct {
@@ -36,7 +39,8 @@ type WikiTextResponse struct {
 }
 
 // Get the full text of a wikipedia page
-func GetWikiText(title string) error {
+func GetWikiText(title string) (WikiTextResponse, error) {
+	var wiki_text_response WikiTextResponse
 	// Construct the URL
 	wiki_url := config.GetWikiUrl()
 	query := url.Values{}
@@ -46,11 +50,12 @@ func GetWikiText(title string) error {
 	query.Add("explaintext", "true")
 	query.Add("format", "json")
 	wiki_url = fmt.Sprintf("%s%s", wiki_url, query.Encode())
+	service_logger.Info(fmt.Sprintf("Requesting wiki text for url: %s", wiki_url))
 	// Construct the request
 	req, err := http.NewRequest("GET", wiki_url, nil)
 	if err != nil {
-		fmt.Println(err)
+		return wiki_text_response, err
 	}
 	req.Header.Set("User-Agent", construct_ua.ConstructUA())
-	return nil
+	return wiki_text_response, nil
 }

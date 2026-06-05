@@ -17,11 +17,11 @@ type Settings struct {
 }
 
 var settings Settings
-var service_name string = "Config"
+var service_logger = logger.NewLogger("Config")
 
 // Initialize the configuration
 func init() {
-	logger.Info("Initializing configuration...", service_name)
+	service_logger.Info("Initializing configuration...")
 	// Load .env
 	err := godotenv.Load(".env")
 	if err != nil {
@@ -35,7 +35,7 @@ func init() {
 	settings.project_url = env_reader.GetEnvString("PROJECT_URL", "https://github.com/1Vewton/WikiSpider")
 	settings.request_packge_name = env_reader.GetEnvString("REQUEST_PACKGE_NAME", "Go-http-client/1.1")
 	// Log the success message
-	logger.Info("Configuration initialized successfully...", service_name)
+	service_logger.Info("Configuration initialized successfully...")
 }
 
 // Get wiki url
