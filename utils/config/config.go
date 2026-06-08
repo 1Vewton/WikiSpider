@@ -28,7 +28,7 @@ func init() {
 		panic(err)
 	}
 	// Fill the .env file
-	settings.wiki_url = env_reader.GetEnvString("WIKI_URL", "https://en.wikipedia.org/w/api.php")
+	settings.wiki_url = env_reader.GetEnvString("WIKI_URL", "https://en.wikipedia.org/w/api.php?")
 	settings.email = env_reader.GetEnvString("EMAIL", "example@example.com")
 	settings.project_name = env_reader.GetEnvString("PROJECT_NAME", "WikiSpider")
 	settings.version = env_reader.GetEnvString("VERSION", "0.1.0")

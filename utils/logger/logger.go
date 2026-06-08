@@ -10,7 +10,7 @@ import (
 var handler *slog.TextHandler
 var logger *slog.Logger
 
-type service_logger struct {
+type ServiceLogger struct {
 	service_name string
 }
 
@@ -45,13 +45,18 @@ func init() {
 }
 
 // Return logger
-func NewLogger(service_name string) service_logger {
-	var new_logger service_logger
+func NewLogger(service_name string) ServiceLogger {
+	var new_logger ServiceLogger
 	new_logger.service_name = service_name
 	return new_logger
 }
 
 // Info
-func (s service_logger) Info(msg string) {
+func (s ServiceLogger) Info(msg string) {
 	logger.Info(fmt.Sprintf("%s: %s", s.service_name, msg))
+}
+
+// Error
+func (s ServiceLogger) Error(msg string) {
+	logger.Error(fmt.Sprintf("%s: %s", s.service_name, msg))
 }
