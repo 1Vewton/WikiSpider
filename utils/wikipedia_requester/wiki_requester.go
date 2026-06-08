@@ -1,4 +1,4 @@
-package wiki_requester
+package wikipedia_requester
 
 import (
 	"encoding/json"
@@ -81,6 +81,7 @@ func GetWikiText(title string, retry_count int) (WikiTextResponse, error) {
 			service_logger.Info("Reading response body")
 			var body []byte
 			body, err = io.ReadAll(resp.Body)
+			service_logger.Info(string(body))
 			if err != nil {
 				service_logger.Error(fmt.Sprintf("Error reading response body: %s", err.Error()))
 				return wiki_text_response, err

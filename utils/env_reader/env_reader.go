@@ -9,5 +9,5 @@ func GetEnvString(key string, defaultValue string) string {
 	if value == "" {
 		return defaultValue
 	}
-	return key
+	return value
 }

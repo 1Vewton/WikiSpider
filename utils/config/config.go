@@ -14,6 +14,7 @@ type Settings struct {
 	project_url         string
 	request_packge_name string
 	version             string
+	maximum_retry       int
 }
 
 var settings Settings
@@ -66,4 +67,9 @@ func GetRequestPackageName() string {
 // Get version
 func GetVersion() string {
 	return settings.version
+}
+
+// Get maximum retry
+func GetMaximumRetry() int {
+	return settings.maximum_retry
 }
