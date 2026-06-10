@@ -45,7 +45,7 @@ func (wikipediaRequest WikipediaRequest) GetText() (string, []string, error) {
 		return corrected_title, nil, err
 	}
 	corrected_title = request_result.Query.Normalized[0].To
-	process_result := make([]string, len(request_result.Query.Pages))
+	process_result := make([]string, 0)
 	for _, page := range request_result.Query.Pages {
 		process_result = append(process_result, page.Extract)
 	}
@@ -66,7 +66,7 @@ func (wikipediaRequest WikipediaRequest) GetReferences() ([]string, error) {
 		// When an error occurs, return the error
 		return nil, err
 	}
-	process_result := make([]string, len(request_result.Query.Pages))
+	process_result := make([]string, 0)
 	for _, hyperlink := range request_result.Query.Pages {
 		process_result = append(process_result, hyperlink.Title)
 	}
