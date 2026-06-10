@@ -7,10 +7,9 @@ import (
 	"math/rand"
 	"net/http"
 	"net/url"
+	"strconv"
 	"time"
 
-	"github.com/1Vewton/WikiSpider/utils/config"
-	"github.com/1Vewton/WikiSpider/utils/construct_ua"
 	"github.com/1Vewton/WikiSpider/utils/logger"
 )
 
@@ -71,10 +70,15 @@ type HyperLinkResponse struct {
 }
 
 // Get the full text of a wikipedia page
-func GetWikiText(title string, retry_count int) (WikiTextResponse, error) {
+func GetWikiText(
+	target_url string,
+	user_agent string,
+	title string,
+	retry_count int,
+) (WikiTextResponse, error) {
 	var wiki_text_response WikiTextResponse
 	// Construct the URL
-	wiki_url := config.GetWikiUrl()
+	wiki_url := target_url
 	query := url.Values{}
 	query.Add("action", "query")
 	query.Add("titles", title)
@@ -82,14 +86,24 @@ func GetWikiText(title string, retry_count int) (WikiTextResponse, error) {
 	query.Add("explaintext", "true")
 	query.Add("format", "json")
 	wiki_url = fmt.Sprintf("%s%s", wiki_url, query.Encode())
-	service_logger.Info(fmt.Sprintf("Requesting wiki text for url: %s", wiki_url))
+	service_logger.Info(
+		fmt.Sprintf(
+			"Requesting wiki text for url: %s",
+			wiki_url,
+		),
+	)
 	// Construct the request
 	req, err := http.NewRequest("GET", wiki_url, nil)
 	if err != nil {
-		service_logger.Error(fmt.Sprintf("Error constructing request: %s", err.Error()))
+		service_logger.Error(
+			fmt.Sprintf(
+				"Error constructing request: %s",
+				err,
+			),
+		)
 		return wiki_text_response, err
 	}
-	req.Header.Set("User-Agent", construct_ua.ConstructUA())
+	req.Header.Set("User-Agent", user_agent)
 	// Start requesting
 	client := &http.Client{}
 	var resp *http.Response
@@ -97,10 +111,20 @@ func GetWikiText(title string, retry_count int) (WikiTextResponse, error) {
 		resp, err = client.Do(req)
 		if err != nil {
 			if i == retry_count-1 {
-				service_logger.Error(fmt.Sprintf("Error requesting wiki text: %s", err.Error()))
+				service_logger.Error(
+					fmt.Sprintf(
+						"Error requesting wiki text: %s",
+						err,
+					),
+				)
 				return wiki_text_response, err
 			} else {
-				service_logger.Error(fmt.Sprintf("Error requesting wiki text: %s", err.Error()))
+				service_logger.Error(
+					fmt.Sprintf(
+						"Error requesting wiki text: %s",
+						err,
+					),
+				)
 				wait_time := rand.Float64()*2 + 1
 				time.Sleep(time.Second * time.Duration(wait_time))
 			}
@@ -111,13 +135,23 @@ func GetWikiText(title string, retry_count int) (WikiTextResponse, error) {
 			body, err = io.ReadAll(resp.Body)
 			service_logger.Info(string(body))
 			if err != nil {
-				service_logger.Error(fmt.Sprintf("Error reading response body: %s", err.Error()))
+				service_logger.Error(
+					fmt.Sprintf(
+						"Error reading response body: %s",
+						err,
+					),
+				)
 				return wiki_text_response, err
 			} else {
 				wiki_text_response = WikiTextResponse{}
 				err = json.Unmarshal(body, &wiki_text_response)
 				if err != nil {
-					service_logger.Error(fmt.Sprintf("Error parsing response body: %s", err.Error()))
+					service_logger.Error(
+						fmt.Sprintf(
+							"Error parsing response body: %s",
+							err,
+						),
+					)
 					return wiki_text_response, err
 				} else {
 					service_logger.Info("Response parsed successfully")
@@ -130,4 +164,73 @@ func GetWikiText(title string, retry_count int) (WikiTextResponse, error) {
 	defer resp.Body.Close()
 	// Parse the response
 	return wiki_text_response, nil
+}
+
+// Get references
+func GetWikiReferences(
+	target_url string,
+	user_agent string,
+	title string,
+	link_limit int,
+	retry_count int,
+) (HyperLinkResponse, error) {
+	var hyper_link_response HyperLinkResponse
+	// Construct the URL
+	wiki_url := target_url
+	query := url.Values{}
+	query.Add("action", "query")
+	query.Add("generator", "links")
+	query.Add("titles", title)
+	query.Add("prop", "info")
+	query.Add("inprop", "url")
+	query.Add("gpllimit", strconv.Itoa(link_limit))
+	query.Add("format", "json")
+	wiki_url = fmt.Sprintf("%s%s", wiki_url, query.Encode())
+	service_logger.Info(fmt.Sprintf("Requesting wiki references for url: %s", wiki_url))
+	// Construct the request
+	req, err := http.NewRequest("GET", wiki_url, nil)
+	if err != nil {
+		service_logger.Error(fmt.Sprintf("Error constructing request: %s", err))
+		return hyper_link_response, err
+	}
+	req.Header.Set("User-Agent", user_agent)
+	// Start requesting
+	client := &http.Client{}
+	var resp *http.Response
+	for i := 0; i < retry_count; i++ {
+		resp, err = client.Do(req)
+		if err != nil {
+			if i == retry_count-1 {
+				service_logger.Error(fmt.Sprintf("Error requesting wiki text: %s", err))
+				return hyper_link_response, err
+			} else {
+				service_logger.Error(fmt.Sprintf("Error requesting wiki text: %s", err))
+				wait_time := rand.Float64()*2 + 1
+				time.Sleep(time.Second * time.Duration(wait_time))
+			}
+		} else {
+			// Process the response body
+			service_logger.Info("Reading response body")
+			var body []byte
+			body, err = io.ReadAll(resp.Body)
+			service_logger.Info(string(body))
+			if err != nil {
+				service_logger.Error(fmt.Sprintf("Error reading response body: %s", err))
+				return hyper_link_response, err
+			} else {
+				hyper_link_response = HyperLinkResponse{}
+				err = json.Unmarshal(body, &hyper_link_response)
+				if err != nil {
+					service_logger.Error(fmt.Sprintf("Error parsing response body: %s", err))
+					return hyper_link_response, err
+				} else {
+					service_logger.Info("Response parsed successfully")
+				}
+			}
+			service_logger.Info("Requesting wiki text successful")
+			break
+		}
+	}
+	defer resp.Body.Close()
+	return hyper_link_response, nil
 }
