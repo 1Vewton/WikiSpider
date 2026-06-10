@@ -186,11 +186,21 @@ func GetWikiReferences(
 	query.Add("gpllimit", strconv.Itoa(link_limit))
 	query.Add("format", "json")
 	wiki_url = fmt.Sprintf("%s%s", wiki_url, query.Encode())
-	service_logger.Info(fmt.Sprintf("Requesting wiki references for url: %s", wiki_url))
+	service_logger.Info(
+		fmt.Sprintf(
+			"Requesting wiki references for url: %s",
+			wiki_url,
+		),
+	)
 	// Construct the request
 	req, err := http.NewRequest("GET", wiki_url, nil)
 	if err != nil {
-		service_logger.Error(fmt.Sprintf("Error constructing request: %s", err))
+		service_logger.Error(
+			fmt.Sprintf(
+				"Error constructing request: %s",
+				err,
+			),
+		)
 		return hyper_link_response, err
 	}
 	req.Header.Set("User-Agent", user_agent)
@@ -201,10 +211,19 @@ func GetWikiReferences(
 		resp, err = client.Do(req)
 		if err != nil {
 			if i == retry_count-1 {
-				service_logger.Error(fmt.Sprintf("Error requesting wiki text: %s", err))
+				service_logger.Error(
+					fmt.Sprintf("Error requesting wiki text: %s",
+						err,
+					),
+				)
 				return hyper_link_response, err
 			} else {
-				service_logger.Error(fmt.Sprintf("Error requesting wiki text: %s", err))
+				service_logger.Error(
+					fmt.Sprintf(
+						"Error requesting wiki text: %s",
+						err,
+					),
+				)
 				wait_time := rand.Float64()*2 + 1
 				time.Sleep(time.Second * time.Duration(wait_time))
 			}
@@ -215,13 +234,22 @@ func GetWikiReferences(
 			body, err = io.ReadAll(resp.Body)
 			service_logger.Info(string(body))
 			if err != nil {
-				service_logger.Error(fmt.Sprintf("Error reading response body: %s", err))
+				service_logger.Error(
+					fmt.Sprintf("Error reading response body: %s",
+						err,
+					),
+				)
 				return hyper_link_response, err
 			} else {
 				hyper_link_response = HyperLinkResponse{}
 				err = json.Unmarshal(body, &hyper_link_response)
 				if err != nil {
-					service_logger.Error(fmt.Sprintf("Error parsing response body: %s", err))
+					service_logger.Error(
+						fmt.Sprintf(
+							"Error parsing response body: %s",
+							err,
+						),
+					)
 					return hyper_link_response, err
 				} else {
 					service_logger.Info("Response parsed successfully")
