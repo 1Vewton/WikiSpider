@@ -32,7 +32,8 @@ func New(
 }
 
 // Get text for a wikipedia page
-func (wikipediaRequest WikipediaRequest) GetText() ([]string, error) {
+func (wikipediaRequest WikipediaRequest) GetText() (string, []string, error) {
+	var corrected_title string
 	request_result, err := wikipedia_requester.GetWikiText(
 		wikipediaRequest.target_url,
 		wikipediaRequest.user_agent,
@@ -41,14 +42,15 @@ func (wikipediaRequest WikipediaRequest) GetText() ([]string, error) {
 	)
 	if err != nil {
 		// When an error occurs, return the error
-		return nil, err
+		return corrected_title, nil, err
 	}
+	corrected_title = request_result.Query.Normalized[0].To
 	process_result := make([]string, len(request_result.Query.Pages))
 	for _, page := range request_result.Query.Pages {
 		process_result = append(process_result, page.Extract)
 	}
 	// Return the extracted text
-	return process_result, nil
+	return corrected_title, process_result, nil
 }
 
 // Get references in a wikipedia page
