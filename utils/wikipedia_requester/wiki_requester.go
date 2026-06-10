@@ -3,13 +3,10 @@ package wikipedia_requester
 import (
 	"encoding/json"
 	"fmt"
-	"io"
-	"math/rand"
-	"net/http"
 	"net/url"
 	"strconv"
-	"time"
 
+	"github.com/1Vewton/WikiSpider/utils/common_requester"
 	"github.com/1Vewton/WikiSpider/utils/logger"
 )
 
@@ -38,81 +35,33 @@ func GetWikiText(
 			wiki_url,
 		),
 	)
-	// Construct the request
-	req, err := http.NewRequest("GET", wiki_url, nil)
+	// Requesting the wiki text
+	text_process_result, err := common_requester.CommonGetFunction(
+		wiki_url,
+		retry_count,
+		user_agent,
+	)
 	if err != nil {
 		service_logger.Error(
 			fmt.Sprintf(
-				"Error constructing request: %s",
+				"Error requesting wiki text: %s",
 				err,
 			),
 		)
-		// Return error if request construction fails
+		// Return error if request fails
 		return wiki_text_response, err
 	}
-	req.Header.Set("User-Agent", user_agent)
-	// Start requesting
-	client := &http.Client{}
-	var resp *http.Response
-	for i := 0; i < retry_count; i++ {
-		resp, err = client.Do(req)
-		if err != nil {
-			if i == retry_count-1 {
-				service_logger.Error(
-					fmt.Sprintf(
-						"Error requesting wiki text: %s",
-						err,
-					),
-				)
-				// Return error if request fails
-				return wiki_text_response, err
-			} else {
-				service_logger.Error(
-					fmt.Sprintf(
-						"Error requesting wiki text: %s",
-						err,
-					),
-				)
-				wait_time := rand.Float64()*2 + 1
-				time.Sleep(time.Second * time.Duration(wait_time))
-			}
-		} else {
-			// Process the response body
-			service_logger.Info("Reading response body")
-			var body []byte
-			body, err = io.ReadAll(resp.Body)
-			service_logger.Info(string(body))
-			if err != nil {
-				service_logger.Error(
-					fmt.Sprintf(
-						"Error reading response body: %s",
-						err,
-					),
-				)
-				// Return error if response processing fails
-				return wiki_text_response, err
-			} else {
-				wiki_text_response = WikiTextResponse{}
-				err = json.Unmarshal(body, &wiki_text_response)
-				if err != nil {
-					service_logger.Error(
-						fmt.Sprintf(
-							"Error parsing response body: %s",
-							err,
-						),
-					)
-					// Return error if response parsing fails
-					return wiki_text_response, err
-				} else {
-					service_logger.Info("Response parsed successfully")
-				}
-			}
-			service_logger.Info("Requesting wiki text successful")
-			break
-		}
+	err = json.Unmarshal(text_process_result, &wiki_text_response)
+	if err != nil {
+		service_logger.Error(
+			fmt.Sprintf(
+				"Error parsing response json: %s",
+				err,
+			),
+		)
+		return wiki_text_response, err
 	}
-	defer resp.Body.Close()
-	// Return the response if no error occurs
+	// Default return
 	return wiki_text_response, nil
 }
 
@@ -142,78 +91,32 @@ func GetWikiReferences(
 			wiki_url,
 		),
 	)
-	// Construct the request
-	req, err := http.NewRequest("GET", wiki_url, nil)
+	// Requesting the wiki references
+	text_process_result, err := common_requester.CommonGetFunction(
+		wiki_url,
+		retry_count,
+		user_agent,
+	)
 	if err != nil {
 		service_logger.Error(
 			fmt.Sprintf(
-				"Error constructing request: %s",
+				"Error fetching references: %s",
 				err,
 			),
 		)
-		// Return error if request construction fails
+		// Return error if request fails
 		return hyper_link_response, err
 	}
-	req.Header.Set("User-Agent", user_agent)
-	// Start requesting
-	client := &http.Client{}
-	var resp *http.Response
-	for i := 0; i < retry_count; i++ {
-		resp, err = client.Do(req)
-		if err != nil {
-			if i == retry_count-1 {
-				service_logger.Error(
-					fmt.Sprintf("Error requesting wiki text: %s",
-						err,
-					),
-				)
-				// Return error if request fails
-				return hyper_link_response, err
-			} else {
-				service_logger.Error(
-					fmt.Sprintf(
-						"Error requesting wiki text: %s",
-						err,
-					),
-				)
-				wait_time := rand.Float64()*2 + 1
-				time.Sleep(time.Second * time.Duration(wait_time))
-			}
-		} else {
-			// Process the response body
-			service_logger.Info("Reading response body")
-			var body []byte
-			body, err = io.ReadAll(resp.Body)
-			service_logger.Info(string(body))
-			if err != nil {
-				service_logger.Error(
-					fmt.Sprintf("Error reading response body: %s",
-						err,
-					),
-				)
-				// Return error if response processing fails
-				return hyper_link_response, err
-			} else {
-				hyper_link_response = HyperLinkResponse{}
-				err = json.Unmarshal(body, &hyper_link_response)
-				if err != nil {
-					service_logger.Error(
-						fmt.Sprintf(
-							"Error parsing response body: %s",
-							err,
-						),
-					)
-					// Return error if response parsing fails
-					return hyper_link_response, err
-				} else {
-					service_logger.Info("Response parsed successfully")
-				}
-			}
-			service_logger.Info("Requesting wiki text successful")
-			break
-		}
+	err = json.Unmarshal(text_process_result, &hyper_link_response)
+	if err != nil {
+		service_logger.Error(
+			fmt.Sprintf(
+				"Error parsing response json: %s",
+				err,
+			),
+		)
+		return hyper_link_response, err
 	}
-	defer resp.Body.Close()
-	// Return the response if no error occurs
+	// Default return
 	return hyper_link_response, nil
 }
