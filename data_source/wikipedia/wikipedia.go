@@ -13,7 +13,7 @@ type WikipediaRequest struct {
 	target_url  string
 }
 
-// New request
+// Create a new WikipediaRequest instance
 func New(
 	title string,
 	retry_count int,
@@ -21,6 +21,7 @@ func New(
 	user_agent string,
 	target_url string,
 ) WikipediaRequest {
+	// Initialize the WikipediaRequest instance
 	return WikipediaRequest{
 		title:       title,
 		retry_count: retry_count,
@@ -30,7 +31,7 @@ func New(
 	}
 }
 
-// Method: Get text
+// Get text for a wikipedia page
 func (wikipediaRequest WikipediaRequest) GetText() ([]string, error) {
 	request_result, err := wikipedia_requester.GetWikiText(
 		wikipediaRequest.target_url,
@@ -39,16 +40,18 @@ func (wikipediaRequest WikipediaRequest) GetText() ([]string, error) {
 		wikipediaRequest.retry_count,
 	)
 	if err != nil {
+		// When an error occurs, return the error
 		return nil, err
 	}
 	process_result := make([]string, len(request_result.Query.Pages))
 	for _, page := range request_result.Query.Pages {
 		process_result = append(process_result, page.Extract)
 	}
+	// Return the extracted text
 	return process_result, nil
 }
 
-// Method: Get references
+// Get references in a wikipedia page
 func (wikipediaRequest WikipediaRequest) GetReferences() ([]string, error) {
 	request_result, err := wikipedia_requester.GetWikiReferences(
 		wikipediaRequest.target_url,
@@ -58,11 +61,13 @@ func (wikipediaRequest WikipediaRequest) GetReferences() ([]string, error) {
 		wikipediaRequest.retry_count,
 	)
 	if err != nil {
+		// When an error occurs, return the error
 		return nil, err
 	}
 	process_result := make([]string, len(request_result.Query.Pages))
 	for _, hyperlink := range request_result.Query.Pages {
 		process_result = append(process_result, hyperlink.Title)
 	}
+	// Return the extracted references
 	return process_result, nil
 }

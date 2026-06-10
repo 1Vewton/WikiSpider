@@ -101,6 +101,7 @@ func GetWikiText(
 				err,
 			),
 		)
+		// Return error if request construction fails
 		return wiki_text_response, err
 	}
 	req.Header.Set("User-Agent", user_agent)
@@ -117,6 +118,7 @@ func GetWikiText(
 						err,
 					),
 				)
+				// Return error if request fails
 				return wiki_text_response, err
 			} else {
 				service_logger.Error(
@@ -141,6 +143,7 @@ func GetWikiText(
 						err,
 					),
 				)
+				// Return error if response processing fails
 				return wiki_text_response, err
 			} else {
 				wiki_text_response = WikiTextResponse{}
@@ -152,6 +155,7 @@ func GetWikiText(
 							err,
 						),
 					)
+					// Return error if response parsing fails
 					return wiki_text_response, err
 				} else {
 					service_logger.Info("Response parsed successfully")
@@ -162,7 +166,7 @@ func GetWikiText(
 		}
 	}
 	defer resp.Body.Close()
-	// Parse the response
+	// Return the response if no error occurs
 	return wiki_text_response, nil
 }
 
@@ -201,6 +205,7 @@ func GetWikiReferences(
 				err,
 			),
 		)
+		// Return error if request construction fails
 		return hyper_link_response, err
 	}
 	req.Header.Set("User-Agent", user_agent)
@@ -216,6 +221,7 @@ func GetWikiReferences(
 						err,
 					),
 				)
+				// Return error if request fails
 				return hyper_link_response, err
 			} else {
 				service_logger.Error(
@@ -239,6 +245,7 @@ func GetWikiReferences(
 						err,
 					),
 				)
+				// Return error if response processing fails
 				return hyper_link_response, err
 			} else {
 				hyper_link_response = HyperLinkResponse{}
@@ -250,6 +257,7 @@ func GetWikiReferences(
 							err,
 						),
 					)
+					// Return error if response parsing fails
 					return hyper_link_response, err
 				} else {
 					service_logger.Info("Response parsed successfully")
@@ -260,5 +268,6 @@ func GetWikiReferences(
 		}
 	}
 	defer resp.Body.Close()
+	// Return the response if no error occurs
 	return hyper_link_response, nil
 }
