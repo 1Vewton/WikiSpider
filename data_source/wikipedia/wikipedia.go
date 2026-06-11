@@ -34,10 +34,13 @@ func New(
 // Get text for a wikipedia page
 func (wikipediaRequest WikipediaRequest) GetText() (string, []string, error) {
 	var corrected_title string
-	request_result, err := wikipedia_requester.GetWikiText(
-		wikipediaRequest.target_url,
-		wikipediaRequest.user_agent,
+	wiki_url := wikipedia_requester.ConstructWikiTextUrl(
 		wikipediaRequest.title,
+		wikipediaRequest.target_url,
+	)
+	request_result, err := wikipedia_requester.GetWikiText(
+		wiki_url,
+		wikipediaRequest.user_agent,
 		wikipediaRequest.retry_count,
 	)
 	if err != nil {
@@ -55,11 +58,14 @@ func (wikipediaRequest WikipediaRequest) GetText() (string, []string, error) {
 
 // Get references in a wikipedia page
 func (wikipediaRequest WikipediaRequest) GetReferences() ([]string, error) {
-	request_result, err := wikipedia_requester.GetWikiReferences(
-		wikipediaRequest.target_url,
-		wikipediaRequest.user_agent,
+	wiki_url := wikipedia_requester.ConstructWikiReferencesUrl(
 		wikipediaRequest.title,
+		wikipediaRequest.target_url,
 		wikipediaRequest.link_limit,
+	)
+	request_result, err := wikipedia_requester.GetWikiReferences(
+		wiki_url,
+		wikipediaRequest.user_agent,
 		wikipediaRequest.retry_count,
 	)
 	if err != nil {

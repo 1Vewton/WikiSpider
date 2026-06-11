@@ -3,8 +3,6 @@ package wikipedia_requester
 import (
 	"encoding/json"
 	"fmt"
-	"net/url"
-	"strconv"
 
 	"github.com/1Vewton/WikiSpider/utils/common_requester"
 	"github.com/1Vewton/WikiSpider/utils/logger"
@@ -14,21 +12,11 @@ var service_logger = logger.NewLogger("WikiRequester")
 
 // Get the full text of a wikipedia page
 func GetWikiText(
-	target_url string,
+	wiki_url string,
 	user_agent string,
-	title string,
 	retry_count int,
 ) (WikiTextResponse, error) {
 	var wiki_text_response WikiTextResponse
-	// Construct the URL
-	wiki_url := target_url
-	query := url.Values{}
-	query.Add("action", "query")
-	query.Add("titles", title)
-	query.Add("prop", "extracts")
-	query.Add("explaintext", "true")
-	query.Add("format", "json")
-	wiki_url = fmt.Sprintf("%s%s", wiki_url, query.Encode())
 	service_logger.Info(
 		fmt.Sprintf(
 			"Requesting wiki text for url: %s",
@@ -67,24 +55,11 @@ func GetWikiText(
 
 // Get references
 func GetWikiReferences(
-	target_url string,
+	wiki_url string,
 	user_agent string,
-	title string,
-	link_limit int,
 	retry_count int,
 ) (HyperLinkResponse, error) {
 	var hyper_link_response HyperLinkResponse
-	// Construct the URL
-	wiki_url := target_url
-	query := url.Values{}
-	query.Add("action", "query")
-	query.Add("generator", "links")
-	query.Add("titles", title)
-	query.Add("prop", "info")
-	query.Add("inprop", "url")
-	query.Add("gpllimit", strconv.Itoa(link_limit))
-	query.Add("format", "json")
-	wiki_url = fmt.Sprintf("%s%s", wiki_url, query.Encode())
 	service_logger.Info(
 		fmt.Sprintf(
 			"Requesting wiki references for url: %s",
