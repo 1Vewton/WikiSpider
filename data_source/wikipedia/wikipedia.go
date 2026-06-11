@@ -47,7 +47,11 @@ func (wikipediaRequest WikipediaRequest) GetText() (string, []string, error) {
 		// When an error occurs, return the error
 		return corrected_title, nil, err
 	}
-	corrected_title = request_result.Query.Normalized[0].To
+	if len(request_result.Query.Normalized) > 0 {
+		corrected_title = request_result.Query.Normalized[0].To
+	} else {
+		corrected_title = wikipediaRequest.title
+	}
 	process_result := make([]string, 0)
 	for _, page := range request_result.Query.Pages {
 		process_result = append(process_result, page.Extract)
