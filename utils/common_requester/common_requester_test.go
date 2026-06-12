@@ -9,18 +9,22 @@ import (
 // Test the requesting function
 func TestRequesting(t *testing.T) {
 	// Create a mock HTTP server
-	mockServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != "GET" {
-			t.Errorf("Expected GET method, got %s", r.Method)
-		}
-		if r.UserAgent() != "Mozilla/5.0" {
-			t.Errorf("Expected User-Agent 'Mozilla/5.0', got %s", r.UserAgent())
-		}
-		// Set the response status code
-		w.WriteHeader(http.StatusOK)
-		// Write the response body
-		w.Write([]byte("Hello, World!"))
-	}))
+	mockServer := httptest.NewServer(
+		http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				if r.Method != "GET" {
+					t.Errorf("Expected GET method, got %s", r.Method)
+				}
+				if r.UserAgent() != "Mozilla/5.0" {
+					t.Errorf("Expected User-Agent 'Mozilla/5.0', got %s", r.UserAgent())
+				}
+				// Set the response status code
+				w.WriteHeader(http.StatusOK)
+				// Write the response body
+				w.Write([]byte("Hello, World!"))
+			},
+		),
+	)
 	// Start requesting
 	result, err := CommonGetFunction(
 		mockServer.URL,
