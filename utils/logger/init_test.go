@@ -1,7 +1,19 @@
-//go:build !test
+//go:build test
 
 package logger
 
-func init() {
+import (
+	"io"
+	"log/slog"
+	"os"
+)
 
+// initialize logger for testing purposes
+func init() {
+	opts := &slog.HandlerOptions{AddSource: true}
+	handler = slog.NewTextHandler(
+		io.Writer(os.Stdout),
+		opts,
+	)
+	logger = slog.New(handler)
 }
