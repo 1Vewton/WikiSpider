@@ -5,7 +5,8 @@ import (
 	"net/url"
 )
 
-func ConstructWikiUrl(
+// Construct the url for getting the wiki text of a page
+func ConstructWikiTextUrl(
 	target_url string,
 	title string,
 ) string {

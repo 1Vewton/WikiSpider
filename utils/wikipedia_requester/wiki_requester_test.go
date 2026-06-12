@@ -81,11 +81,11 @@ func TestGetWikiText(t *testing.T) {
 			},
 		),
 	)
+	defer mockServer.Close()
 	_, err := GetWikiText(mockServer.URL, "Modzilla/5.0", 3)
 	if err != nil {
 		t.Errorf("Expected no error, got %v", err)
 	}
-	defer mockServer.Close()
 }
 
 // Test getting wiki references
@@ -98,9 +98,9 @@ func TestGetWikiReferences(t *testing.T) {
 			},
 		),
 	)
+	defer mockServer.Close()
 	_, err := GetWikiReferences(mockServer.URL, "Modzilla/5.0", 3)
 	if err != nil {
 		t.Errorf("Expected no error, got %v", err)
 	}
-	defer mockServer.Close()
 }

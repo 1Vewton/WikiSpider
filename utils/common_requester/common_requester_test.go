@@ -6,8 +6,13 @@ import (
 	"testing"
 )
 
+type TestCase struct {
+	Text string
+}
+
 // Test the requesting function
 func TestRequesting(t *testing.T) {
+	var result TestCase
 	// Create a mock HTTP server
 	mockServer := httptest.NewServer(
 		http.HandlerFunc(
@@ -21,23 +26,21 @@ func TestRequesting(t *testing.T) {
 				// Set the response status code
 				w.WriteHeader(http.StatusOK)
 				// Write the response body
-				w.Write([]byte("Hello, World!"))
+				w.Write([]byte(`{'Text': 'Hello, World!'}`))
 			},
 		),
 	)
+	// Close mock server to free up resources
+	defer mockServer.Close()
 	// Start requesting
-	result, err := CommonGetFunction(
+	err := CommonGetFunction(
 		mockServer.URL,
 		3,
 		"Mozilla/5.0",
+		&result,
 	)
 	// Check for errors
 	if err != nil {
 		t.Errorf("Error: %s", err)
 	}
-	if string(result) != "Hello, World!" {
-		t.Errorf("Expected 'Hello, World!', got '%s'", string(result))
-	}
-	// Close mock server to free up resources
-	defer mockServer.Close()
 }

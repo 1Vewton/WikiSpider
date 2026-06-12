@@ -2,6 +2,7 @@
 package common_requester
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"math/rand"
@@ -18,8 +19,8 @@ func CommonGetFunction(
 	wiki_url string,
 	retry_count int,
 	user_agent string,
-) ([]byte, error) {
-	// Initialize response variable
+	response any,
+) error {
 	var wiki_text_response []byte
 	// Constructing request
 	req, err := http.NewRequest("GET", wiki_url, nil)
@@ -31,7 +32,7 @@ func CommonGetFunction(
 			),
 		)
 		// Return error if request construction fails
-		return wiki_text_response, err
+		return err
 	}
 	req.Header.Set("User-Agent", user_agent)
 	// Start requesting
@@ -48,7 +49,7 @@ func CommonGetFunction(
 					),
 				)
 				// Return error if request fails for too many times
-				return wiki_text_response, err
+				return err
 			} else {
 				// If error occurs, go to next turn
 				service_logger.Error(
@@ -72,7 +73,6 @@ func CommonGetFunction(
 			var body []byte
 			body, err = io.ReadAll(resp.Body)
 			wiki_text_response = body
-			service_logger.Info(string(wiki_text_response))
 			if err != nil {
 				service_logger.Error(
 					fmt.Sprintf(
@@ -81,7 +81,7 @@ func CommonGetFunction(
 					),
 				)
 				// Return error if response processing fails
-				return wiki_text_response, err
+				return err
 			}
 			service_logger.Info("Requesting successful")
 			break
@@ -90,5 +90,17 @@ func CommonGetFunction(
 	// Close response to free up resources
 	defer resp.Body.Close()
 	// Return the response if no error occurs
-	return wiki_text_response, nil
+	err = json.Unmarshal(wiki_text_response, response)
+	if err != nil {
+		service_logger.Error(
+			fmt.Sprintf(
+				"Error parsing response json: %s",
+				err,
+			),
+		)
+		// Return error if response parsing fails
+		return err
+	}
+	// Default return
+	return nil
 }

@@ -2,7 +2,6 @@
 package wikipedia_requester
 
 import (
-	"encoding/json"
 	"fmt"
 
 	"github.com/1Vewton/WikiSpider/utils/common_requester"
@@ -25,10 +24,11 @@ func GetWikiText(
 		),
 	)
 	// Requesting the wiki text
-	text_process_result, err := common_requester.CommonGetFunction(
+	err := common_requester.CommonGetFunction(
 		wiki_url,
 		retry_count,
 		user_agent,
+		&wiki_text_response,
 	)
 	if err != nil {
 		service_logger.Error(
@@ -38,16 +38,6 @@ func GetWikiText(
 			),
 		)
 		// Return error if request fails
-		return wiki_text_response, err
-	}
-	err = json.Unmarshal(text_process_result, &wiki_text_response)
-	if err != nil {
-		service_logger.Error(
-			fmt.Sprintf(
-				"Error parsing response json: %s",
-				err,
-			),
-		)
 		return wiki_text_response, err
 	}
 	// Default return
@@ -68,10 +58,11 @@ func GetWikiReferences(
 		),
 	)
 	// Requesting the wiki references
-	text_process_result, err := common_requester.CommonGetFunction(
+	err := common_requester.CommonGetFunction(
 		wiki_url,
 		retry_count,
 		user_agent,
+		&hyper_link_response,
 	)
 	if err != nil {
 		service_logger.Error(
@@ -81,16 +72,6 @@ func GetWikiReferences(
 			),
 		)
 		// Return error if request fails
-		return hyper_link_response, err
-	}
-	err = json.Unmarshal(text_process_result, &hyper_link_response)
-	if err != nil {
-		service_logger.Error(
-			fmt.Sprintf(
-				"Error parsing response json: %s",
-				err,
-			),
-		)
 		return hyper_link_response, err
 	}
 	// Default return
