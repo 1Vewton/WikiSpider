@@ -40,7 +40,7 @@ func CommonGetFunction(
 	var resp *http.Response
 	for i := 0; i < retry_count; i++ {
 		resp, err = client.Do(req)
-		if err != nil {
+		if err != nil || resp.StatusCode/100 != 2 {
 			if i == retry_count-1 {
 				service_logger.Error(
 					fmt.Sprintf(
