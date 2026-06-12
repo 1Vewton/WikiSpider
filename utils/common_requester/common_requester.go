@@ -1,3 +1,4 @@
+// Requester for retrieving information from the given URL
 package common_requester
 
 import (
@@ -12,6 +13,7 @@ import (
 
 var service_logger = logger.NewLogger("WikiRequester")
 
+// Retrieve information from the given URL using GET method
 func CommonGetFunction(
 	wiki_url string,
 	retry_count int,

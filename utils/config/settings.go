@@ -2,13 +2,13 @@ package config
 
 // Settings struct
 type Settings struct {
-	wiki_url            string
-	email               string
-	project_name        string
-	project_url         string
-	request_packge_name string
-	version             string
-	maximum_retry       int
+	wiki_url            string // url of the wiki
+	email               string // email address
+	project_name        string // name of the project
+	project_url         string // url of the project
+	request_packge_name string // name of the request package
+	version             string // version of the project
+	maximum_retry       int    // maximum retry count
 }
 
 var settings Settings

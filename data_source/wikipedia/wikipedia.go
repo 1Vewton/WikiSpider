@@ -1,3 +1,4 @@
+// Wikipedia data source
 package wikipedia
 
 import (
@@ -6,11 +7,11 @@ import (
 
 // Wkipedia request data structure
 type WikipediaRequest struct {
-	title       string
-	retry_count int
-	link_limit  int
-	user_agent  string
-	target_url  string
+	title       string // Title of the wikipedia page
+	retry_count int    // Number of retries for the request
+	link_limit  int    // Maximum number of references to retrieve
+	user_agent  string // User agent for the request
+	target_url  string // Target URL (wikipedia API URL)
 }
 
 // Create a new WikipediaRequest instance
@@ -31,7 +32,8 @@ func New(
 	}
 }
 
-// Get text for a wikipedia page
+// Get text for a wikipedia page.
+// Returns the corrected title, extracted text, and any errors.
 func (wikipediaRequest WikipediaRequest) GetText() (string, []string, error) {
 	var corrected_title string
 	wiki_url := wikipedia_requester.ConstructWikiTextUrl(
@@ -60,7 +62,8 @@ func (wikipediaRequest WikipediaRequest) GetText() (string, []string, error) {
 	return corrected_title, process_result, nil
 }
 
-// Get references in a wikipedia page
+// Get references in a wikipedia page.
+// Returns the extracted references and any errors.
 func (wikipediaRequest WikipediaRequest) GetReferences() ([]string, error) {
 	wiki_url := wikipedia_requester.ConstructWikiReferencesUrl(
 		wikipediaRequest.title,
