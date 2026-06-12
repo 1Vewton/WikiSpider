@@ -26,7 +26,7 @@ func TestRequesting(t *testing.T) {
 				// Set the response status code
 				w.WriteHeader(http.StatusOK)
 				// Write the response body
-				w.Write([]byte(`{'Text': 'Hello, World!'}`))
+				w.Write([]byte(`{"Text": "Hello, World!"}`))
 			},
 		),
 	)
