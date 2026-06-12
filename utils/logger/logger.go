@@ -1,3 +1,6 @@
+//go:build !test
+
+// Managing the logging system
 package logger
 
 import (

@@ -1,3 +1,4 @@
+// Constructing user agent
 package construct_ua
 
 import (

@@ -1,6 +1,11 @@
+//go:build !test
+
+// Manage the configuration settings
 package config
 
 import (
+	"fmt"
+
 	"github.com/1Vewton/WikiSpider/utils/logger"
 	"github.com/joho/godotenv"
 )
@@ -13,9 +18,12 @@ func init() {
 	// Load .env
 	err := godotenv.Load(".env")
 	if err != nil {
-		panic(err)
+		fmt.Printf(
+			"Error loading env file due to %s, using default setting",
+			err,
+		)
 	}
-	// Fill the .env file
+	// Read the .env file
 	settings.wiki_url = GetEnvString(
 		"WIKI_URL",
 		"https://en.wikipedia.org/w/api.php?",

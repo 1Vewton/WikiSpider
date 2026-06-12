@@ -1,3 +1,4 @@
+// Requesting fandom
 package fandom_requester
 
 import (
