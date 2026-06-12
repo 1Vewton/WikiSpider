@@ -3,17 +3,17 @@
 package logger
 
 import (
-	"io"
+	"fmt"
 	"log/slog"
 	"os"
 )
 
 // initialize logger for testing purposes
 func init() {
-	opts := &slog.HandlerOptions{AddSource: true}
+	fmt.Println("Initializing logger for testing purposes")
 	handler = slog.NewTextHandler(
-		io.Writer(os.Stdout),
-		opts,
+		os.Stdout,
+		nil,
 	)
 	logger = slog.New(handler)
 }

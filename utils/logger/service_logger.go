@@ -18,10 +18,14 @@ func NewLogger(service_name string) ServiceLogger {
 
 // Info
 func (s ServiceLogger) Info(msg string) {
-	logger.Info(fmt.Sprintf("%s: %s", s.service_name, msg))
+	if logger != nil {
+		logger.Info(fmt.Sprintf("%s: %s", s.service_name, msg))
+	}
 }
 
 // Error
 func (s ServiceLogger) Error(msg string) {
-	logger.Error(fmt.Sprintf("%s: %s", s.service_name, msg))
+	if logger != nil {
+		logger.Error(fmt.Sprintf("%s: %s", s.service_name, msg))
+	}
 }

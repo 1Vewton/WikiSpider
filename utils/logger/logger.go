@@ -7,3 +7,7 @@ import (
 
 var handler *slog.TextHandler
 var logger *slog.Logger
+
+func init() {
+
+}
