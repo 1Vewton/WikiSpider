@@ -19,6 +19,7 @@ func ConstructWikiTextUrl(
 	query.Add("explaintext", "true")
 	query.Add("format", "json")
 	wiki_url = fmt.Sprintf("%s%s", wiki_url, query.Encode())
+	// Return the url for getting the texts inside a wiki page.
 	return wiki_url
 }
 
@@ -38,5 +39,6 @@ func ConstructWikiReferencesUrl(
 	query.Add("gpllimit", strconv.Itoa(link_limit))
 	query.Add("format", "json")
 	wiki_url = fmt.Sprintf("%s%s", wiki_url, query.Encode())
+	// Return the url for the hyperlinks inside a wiki page.
 	return wiki_url
 }

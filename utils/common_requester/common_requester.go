@@ -37,25 +37,27 @@ func CommonGetFunction(
 	req.Header.Set("User-Agent", user_agent)
 	// Start requesting
 	client := &http.Client{}
-	var resp *http.Response
+	var resp = &http.Response{}
 	for i := 0; i < retry_count; i++ {
-		resp, err = client.Do(req)
-		if err != nil || resp.StatusCode/100 != 2 {
+		var err_req error
+		resp, err_req = client.Do(req)
+		if err_req != nil || resp.StatusCode/100 != 2 {
 			if i == retry_count-1 {
 				service_logger.Error(
 					fmt.Sprintf(
 						"Error occured when requesting: %s",
-						err,
+						err_req,
 					),
 				)
-				// Return error if request fails for too many times
-				return err
+				err = err_req
+				// Quit the loop if error occurs for too many times
+				break
 			} else {
 				// If error occurs, go to next turn
 				service_logger.Error(
 					fmt.Sprintf(
 						"Error occured when requesting: %s",
-						err,
+						err_req,
 					),
 				)
 				wait_time := rand.Float64()*2 + 1
@@ -65,30 +67,34 @@ func CommonGetFunction(
 						wait_time,
 					),
 				)
+				err = nil
 				time.Sleep(time.Second * time.Duration(wait_time))
 			}
 		} else {
 			// Process the response body
 			service_logger.Info("Reading response body")
-			var body []byte
-			body, err = io.ReadAll(resp.Body)
+			body, err_process := io.ReadAll(resp.Body)
 			wiki_text_response = body
-			if err != nil {
+			if err_process != nil {
 				service_logger.Error(
 					fmt.Sprintf(
 						"Error reading response body: %s",
-						err,
+						err_process,
 					),
 				)
 				// Return error if response processing fails
-				return err
+				break
 			}
+			err = nil
 			service_logger.Info("Requesting successful")
 			break
 		}
 	}
 	// Close response to free up resources
 	defer resp.Body.Close()
+	if err != nil {
+		return err
+	}
 	// Return the response if no error occurs
 	err = json.Unmarshal(wiki_text_response, response)
 	if err != nil {

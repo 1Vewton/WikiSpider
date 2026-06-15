@@ -86,3 +86,9 @@ func (wikipediaRequest WikipediaRequest) GetReferences() ([]string, error) {
 	// Return the extracted references
 	return process_result, nil
 }
+
+// Get the target url
+func (wikipediaRequest WikipediaRequest) GetTargetURL() string {
+	// Return the target url that is a private member of WikipediaRequest
+	return wikipediaRequest.target_url
+}
