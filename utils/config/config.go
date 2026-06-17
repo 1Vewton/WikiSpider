@@ -23,31 +23,24 @@ func init() {
 			err,
 		)
 	}
-	// Read the .env file
-	settings.wiki_url = GetEnvString(
-		"WIKI_URL",
-		"https://en.wikipedia.org/w/api.php?",
-	)
-	settings.email = GetEnvString(
-		"EMAIL",
-		"example@example.com",
-	)
-	settings.project_name = GetEnvString(
-		"PROJECT_NAME",
-		"WikiSpider",
-	)
-	settings.version = GetEnvString(
-		"VERSION",
-		"0.1.0",
-	)
-	settings.project_url = GetEnvString(
-		"PROJECT_URL",
-		"https://github.com/1Vewton/WikiSpider",
-	)
-	settings.request_packge_name = GetEnvString(
-		"REQUEST_PACKGE_NAME",
-		"Go-http-client/1.1",
-	)
-	// Log the success message
-	service_logger.Info("Configuration initialized successfully...")
+	/*
+		settings.project_name = GetEnvString(
+			"PROJECT_NAME",
+			"WikiSpider",
+		)
+		settings.version = GetEnvString(
+			"VERSION",
+			"0.1.0",
+		)
+		settings.project_url = GetEnvString(
+			"PROJECT_URL",
+			"https://github.com/1Vewton/WikiSpider",
+		)
+		settings.request_packge_name = GetEnvString(
+			"REQUEST_PACKGE_NAME",
+			"Go-http-client/1.1",
+		)
+		// Log the success message
+		service_logger.Info("Configuration initialized successfully...")
+	*/
 }

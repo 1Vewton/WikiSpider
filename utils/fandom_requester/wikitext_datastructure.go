@@ -7,9 +7,9 @@ type WikiTextStruct struct {
 
 // The parse
 type ParseStruct struct {
-	Title          string         `json:"title"`
-	PageID         int            `json:"pageid"`
-	WikiTextStruct WikiTextStruct `json:"wikitext"`
+	Title    string         `json:"title"`
+	PageID   int            `json:"pageid"`
+	WikiText WikiTextStruct `json:"wikitext"`
 }
 
 // The response fetched from the fandom wiki api

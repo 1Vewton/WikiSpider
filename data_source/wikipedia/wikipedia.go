@@ -14,7 +14,7 @@ type WikipediaRequest struct {
 	target_url  string // Target URL (wikipedia API URL)
 }
 
-// Create a new WikipediaRequest instance
+// Create new wikipedia request
 func New(
 	title string,
 	retry_count int,
