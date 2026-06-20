@@ -1,5 +1,5 @@
 // Requester for retrieving information from the given URL
-package common_requester
+package commonrequester
 
 import (
 	"encoding/json"

@@ -1,7 +1,7 @@
 package fandom
 
 import (
-	"github.com/1Vewton/WikiSpider/utils/fandom_requester"
+	"github.com/1Vewton/WikiSpider/utils/fandomrequester"
 )
 
 // Fandom request data structure
@@ -34,11 +34,11 @@ func New(
 func (fandomRequest *FandomRequest) GetText() (string, []string, error) {
 	var title string
 	texts := make([]string, 0)
-	wiki_url := fandom_requester.ConstructWikiTextUrl(
+	wiki_url := fandomrequester.ConstructWikiTextURL(
 		fandomRequest.target_url,
 		fandomRequest.title,
 	)
-	request_result, err := fandom_requester.GetWikiText(
+	request_result, err := fandomrequester.GetWikiText(
 		wiki_url,
 		fandomRequest.user_agent,
 		fandomRequest.retry_count,
@@ -55,12 +55,12 @@ func (fandomRequest *FandomRequest) GetText() (string, []string, error) {
 // Get wiki references
 func (fandomRequest *FandomRequest) GetReferences() ([]string, error) {
 	references := make([]string, 0)
-	wiki_url := fandom_requester.ConstructWikiReferencesUrl(
+	wiki_url := fandomrequester.ConstructWikiReferencesURL(
 		fandomRequest.target_url,
 		fandomRequest.title,
 		fandomRequest.link_limit,
 	)
-	request_result, err := fandom_requester.GetWikiReferences(
+	request_result, err := fandomrequester.GetWikiReferences(
 		wiki_url,
 		fandomRequest.user_agent,
 		fandomRequest.retry_count,

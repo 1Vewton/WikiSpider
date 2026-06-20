@@ -1,4 +1,4 @@
-package fandom_requester
+package fandomrequester
 
 // Wiki Text
 type WikiTextStruct struct {

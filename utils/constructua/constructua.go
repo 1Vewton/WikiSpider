@@ -1,5 +1,5 @@
 // Constructing user agent
-package construct_ua
+package constructua
 
 import (
 	"fmt"
@@ -14,7 +14,7 @@ func ConstructUA() string {
 		"%s/%s (%s; %s) %s",
 		config.GetProjectName(),
 		config.GetVersion(),
-		config.GetProjectUrl(),
+		config.GetProjectURL(),
 		config.GetEmail(),
 		config.GetRequestPackageName(),
 	)

@@ -1,4 +1,4 @@
-package fandom_requester
+package fandomrequester
 
 // The data structure for hyperlinks of fandom wiki
 type HyperLink struct {

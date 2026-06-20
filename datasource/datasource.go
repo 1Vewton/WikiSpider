@@ -1,5 +1,5 @@
 // Manage the data sources
-package data_source
+package datasource
 
 // Data Source interface
 type DataSource interface {

@@ -1,4 +1,4 @@
-package wikipedia_requester
+package wikipediarequester
 
 // Data structure of a single page
 type Pages struct {

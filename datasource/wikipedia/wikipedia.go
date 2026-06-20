@@ -2,7 +2,7 @@
 package wikipedia
 
 import (
-	"github.com/1Vewton/WikiSpider/utils/wikipedia_requester"
+	"github.com/1Vewton/WikiSpider/utils/wikipediarequester"
 )
 
 // Wkipedia request data structure
@@ -36,11 +36,11 @@ func New(
 // Returns the corrected title, extracted text, and any errors.
 func (wikipediaRequest *WikipediaRequest) GetText() (string, []string, error) {
 	var corrected_title string
-	wiki_url := wikipedia_requester.ConstructWikiTextUrl(
+	wiki_url := wikipediarequester.ConstructWikiTextURL(
 		wikipediaRequest.title,
 		wikipediaRequest.target_url,
 	)
-	request_result, err := wikipedia_requester.GetWikiText(
+	request_result, err := wikipediarequester.GetWikiText(
 		wiki_url,
 		wikipediaRequest.user_agent,
 		wikipediaRequest.retry_count,
@@ -65,12 +65,12 @@ func (wikipediaRequest *WikipediaRequest) GetText() (string, []string, error) {
 // Get references in a wikipedia page.
 // Returns the extracted references and any errors.
 func (wikipediaRequest *WikipediaRequest) GetReferences() ([]string, error) {
-	wiki_url := wikipedia_requester.ConstructWikiReferencesUrl(
+	wiki_url := wikipediarequester.ConstructWikiReferencesURL(
 		wikipediaRequest.title,
 		wikipediaRequest.target_url,
 		wikipediaRequest.link_limit,
 	)
-	request_result, err := wikipedia_requester.GetWikiReferences(
+	request_result, err := wikipediarequester.GetWikiReferences(
 		wiki_url,
 		wikipediaRequest.user_agent,
 		wikipediaRequest.retry_count,

@@ -1,10 +1,10 @@
 // Requesting wikipedia
-package wikipedia_requester
+package wikipediarequester
 
 import (
 	"fmt"
 
-	"github.com/1Vewton/WikiSpider/utils/common_requester"
+	"github.com/1Vewton/WikiSpider/utils/commonrequester"
 	"github.com/1Vewton/WikiSpider/utils/logger"
 )
 
@@ -24,7 +24,7 @@ func GetWikiText(
 		),
 	)
 	// Requesting the wiki text
-	err := common_requester.CommonGetFunction(
+	err := commonrequester.CommonGetFunction(
 		wiki_url,
 		retry_count,
 		user_agent,
@@ -58,7 +58,7 @@ func GetWikiReferences(
 		),
 	)
 	// Requesting the wiki references
-	err := common_requester.CommonGetFunction(
+	err := commonrequester.CommonGetFunction(
 		wiki_url,
 		retry_count,
 		user_agent,

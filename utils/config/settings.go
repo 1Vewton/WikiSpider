@@ -14,7 +14,7 @@ type Settings struct {
 var settings Settings
 
 // Get wiki url
-func GetWikiUrl() string {
+func GetWikiURL() string {
 	SetEnvString(
 		"WIKI_URL",
 		"https://en.wikipedia.org/w/api.php?",
@@ -47,7 +47,7 @@ func GetProjectName() string {
 }
 
 // Get project url
-func GetProjectUrl() string {
+func GetProjectURL() string {
 	SetEnvString(
 		"PROJECT_URL",
 		"https://github.com/1Vewton/WikiSpider",

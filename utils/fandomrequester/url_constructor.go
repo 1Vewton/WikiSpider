@@ -1,4 +1,4 @@
-package fandom_requester
+package fandomrequester
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 )
 
 // Construct the url for getting the wiki text of a page
-func ConstructWikiTextUrl(
+func ConstructWikiTextURL(
 	target_url string,
 	title string,
 ) string {
@@ -24,7 +24,7 @@ func ConstructWikiTextUrl(
 }
 
 // Construct the url for getting the references of a page
-func ConstructWikiReferencesUrl(
+func ConstructWikiReferencesURL(
 	target_url string,
 	title string,
 	link_limit int,

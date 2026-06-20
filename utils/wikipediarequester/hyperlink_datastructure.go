@@ -1,4 +1,4 @@
-package wikipedia_requester
+package wikipediarequester
 
 // Hyper Link
 type HyperLink struct {

@@ -1,4 +1,4 @@
-package wikipedia_requester
+package wikipediarequester
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 )
 
 // Construct url for getting the text from wikipedia page.
-func ConstructWikiTextUrl(
+func ConstructWikiTextURL(
 	title string,
 	target_url string,
 ) string {
@@ -24,7 +24,7 @@ func ConstructWikiTextUrl(
 }
 
 // Construct url for getting the references
-func ConstructWikiReferencesUrl(
+func ConstructWikiReferencesURL(
 	title string,
 	target_url string,
 	link_limit int,

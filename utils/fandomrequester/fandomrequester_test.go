@@ -1,4 +1,4 @@
-package wikipedia_requester
+package fandomrequester
 
 import (
 	"net/http"
@@ -7,16 +7,16 @@ import (
 	"testing"
 )
 
-// Test getting wiki text
+// Test whether the function fetches wiki text successfully
 func TestGetWikiText(t *testing.T) {
 	// Read testdata
 	data, err := os.ReadFile(
-		"testdata/san_fransisco_text.json",
+		"testdata/stone_text.json",
 	)
 	if err != nil {
 		t.Fatalf("The test failed when reading file due to %s", err)
 	}
-	//Start server
+	// Start the mock server
 	mockServer := httptest.NewServer(
 		http.HandlerFunc(
 			func(w http.ResponseWriter, r *http.Request) {
@@ -27,22 +27,26 @@ func TestGetWikiText(t *testing.T) {
 	)
 	defer mockServer.Close()
 	// Start testing
-	_, err = GetWikiText(mockServer.URL, "Modzilla/5.0", 3)
+	_, err = GetWikiText(
+		mockServer.URL,
+		"modzilla/5.0",
+		3,
+	)
 	if err != nil {
-		t.Errorf("Expected no error, got %v", err)
+		t.Errorf("Expected no error, got %s", err)
 	}
 }
 
-// Test getting wiki references
+// Test whether the function fetches references successfully
 func TestGetWikiReferences(t *testing.T) {
 	// Read testdata
 	data, err := os.ReadFile(
-		"testdata/san_fransisco_references.json",
+		"testdata/stone_references.json",
 	)
 	if err != nil {
 		t.Fatalf("The test failed when reading file due to %s", err)
 	}
-	// Start server
+	// Start the mockserver
 	mockServer := httptest.NewServer(
 		http.HandlerFunc(
 			func(w http.ResponseWriter, r *http.Request) {
@@ -53,8 +57,12 @@ func TestGetWikiReferences(t *testing.T) {
 	)
 	defer mockServer.Close()
 	// Start testing
-	_, err = GetWikiReferences(mockServer.URL, "Modzilla/5.0", 3)
+	_, err = GetWikiReferences(
+		mockServer.URL,
+		"modzilla/5.0",
+		3,
+	)
 	if err != nil {
-		t.Errorf("Expected no error, got %v", err)
+		t.Errorf("Expected no error, got %s", err)
 	}
 }

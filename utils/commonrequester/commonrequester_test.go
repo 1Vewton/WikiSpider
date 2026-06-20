@@ -1,4 +1,4 @@
-package common_requester
+package commonrequester
 
 import (
 	"net/http"
