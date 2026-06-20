@@ -34,7 +34,7 @@ func New(
 
 // Get text for a wikipedia page.
 // Returns the corrected title, extracted text, and any errors.
-func (wikipediaRequest WikipediaRequest) GetText() (string, []string, error) {
+func (wikipediaRequest *WikipediaRequest) GetText() (string, []string, error) {
 	var corrected_title string
 	wiki_url := wikipedia_requester.ConstructWikiTextUrl(
 		wikipediaRequest.title,
@@ -64,7 +64,7 @@ func (wikipediaRequest WikipediaRequest) GetText() (string, []string, error) {
 
 // Get references in a wikipedia page.
 // Returns the extracted references and any errors.
-func (wikipediaRequest WikipediaRequest) GetReferences() ([]string, error) {
+func (wikipediaRequest *WikipediaRequest) GetReferences() ([]string, error) {
 	wiki_url := wikipedia_requester.ConstructWikiReferencesUrl(
 		wikipediaRequest.title,
 		wikipediaRequest.target_url,
@@ -88,7 +88,7 @@ func (wikipediaRequest WikipediaRequest) GetReferences() ([]string, error) {
 }
 
 // Get the target url
-func (wikipediaRequest WikipediaRequest) GetTargetURL() string {
+func (wikipediaRequest *WikipediaRequest) GetTargetURL() string {
 	// Return the target url that is a private member of WikipediaRequest
 	return wikipediaRequest.target_url
 }

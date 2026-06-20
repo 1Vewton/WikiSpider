@@ -31,7 +31,7 @@ func New(
 }
 
 // Get wiki text
-func (fandomRequest FandomRequest) GetText() (string, []string, error) {
+func (fandomRequest *FandomRequest) GetText() (string, []string, error) {
 	var title string
 	texts := make([]string, 0)
 	wiki_url := fandom_requester.ConstructWikiTextUrl(
@@ -53,7 +53,7 @@ func (fandomRequest FandomRequest) GetText() (string, []string, error) {
 }
 
 // Get wiki references
-func (fandomRequest FandomRequest) GetReferences() ([]string, error) {
+func (fandomRequest *FandomRequest) GetReferences() ([]string, error) {
 	references := make([]string, 0)
 	wiki_url := fandom_requester.ConstructWikiReferencesUrl(
 		fandomRequest.target_url,
@@ -79,7 +79,7 @@ func (fandomRequest FandomRequest) GetReferences() ([]string, error) {
 }
 
 // Get target url
-func (fandomRequest FandomRequest) GetTargetURL() string {
+func (fandomRequest *FandomRequest) GetTargetURL() string {
 	// Directly return the target url
 	return fandomRequest.target_url
 }
