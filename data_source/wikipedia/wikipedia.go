@@ -21,9 +21,9 @@ func New(
 	link_limit int,
 	user_agent string,
 	target_url string,
-) WikipediaRequest {
+) *WikipediaRequest {
 	// Initialize the WikipediaRequest instance
-	return WikipediaRequest{
+	return &WikipediaRequest{
 		title:       title,
 		retry_count: retry_count,
 		link_limit:  link_limit,

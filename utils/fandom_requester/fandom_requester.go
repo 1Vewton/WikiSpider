@@ -15,7 +15,7 @@ func GetWikiText(
 	wiki_url string,
 	user_agent string,
 	retry_count int,
-) (WikiTextResponse, error) {
+) (*WikiTextResponse, error) {
 	var wiki_text_response WikiTextResponse
 	service_logger.Info(
 		fmt.Sprintf(
@@ -38,10 +38,10 @@ func GetWikiText(
 			),
 		)
 		// Return error if request fails
-		return wiki_text_response, err
+		return nil, err
 	}
 	// Default return
-	return wiki_text_response, nil
+	return &wiki_text_response, nil
 }
 
 // Get the wiki references
@@ -49,7 +49,7 @@ func GetWikiReferences(
 	wiki_url string,
 	user_agent string,
 	retry_count int,
-) (HyperLinkResponse, error) {
+) (*HyperLinkResponse, error) {
 	var hyper_link_response HyperLinkResponse
 	service_logger.Info(
 		fmt.Sprintf(
@@ -72,8 +72,8 @@ func GetWikiReferences(
 			),
 		)
 		// Return error if request fails
-		return hyper_link_response, err
+		return nil, err
 	}
 	// Default return
-	return hyper_link_response, nil
+	return &hyper_link_response, nil
 }

@@ -20,8 +20,8 @@ func New(
 	link_limit int,
 	user_agent string,
 	target_url string,
-) FandomRequest {
-	return FandomRequest{
+) *FandomRequest {
+	return &FandomRequest{
 		title:       title,
 		retry_count: retry_count,
 		link_limit:  link_limit,
