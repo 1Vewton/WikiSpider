@@ -3,69 +3,31 @@ package fandom_requester
 import (
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 )
 
-const stone_references string = `{
-  "continue": {
-    "plcontinue": "12|0|Alpha_1.1.0.8",
-    "continue": "||"
-  },
-  "query": {
-    "pages": {
-      "12": {
-        "pageid": 12,
-        "ns": 0,
-        "title": "Stone",
-        "links": [
-          {
-            "ns": 0,
-            "title": "1.0"
-          },
-          {
-            "ns": 0,
-            "title": "1.90"
-          },
-          {
-            "ns": 0,
-            "title": "Activator Rail"
-          },
-          {
-            "ns": 0,
-            "title": "Air"
-          },
-          {
-            "ns": 0,
-            "title": "Allow"
-          }
-        ]
-      }
-    }
-  }
-}`
-const stone_text string = `{
-  "parse": {
-    "title": "Stone",
-    "pageid": 12,
-    "wikitext": {
-      "*": "Stone"
-	  }
-  }
-}`
-
 // Test whether the function fetches wiki text successfully
 func TestGetWikiText(t *testing.T) {
+	// Read testdata
+	data, err := os.ReadFile(
+		"testdata/stone_text.json",
+	)
+	if err != nil {
+		t.Fatalf("The test failed when reading file due to %s", err)
+	}
 	// Start the mock server
 	mockServer := httptest.NewServer(
 		http.HandlerFunc(
 			func(w http.ResponseWriter, r *http.Request) {
 				w.Header().Set("Content-Type", "application/json")
-				w.Write([]byte(stone_text))
+				w.Write(data)
 			},
 		),
 	)
 	defer mockServer.Close()
-	_, err := GetWikiText(
+	// Start testing
+	_, err = GetWikiText(
 		mockServer.URL,
 		"modzilla/5.0",
 		3,
@@ -77,16 +39,25 @@ func TestGetWikiText(t *testing.T) {
 
 // Test whether the function fetches references successfully
 func TestGetWikiReferences(t *testing.T) {
+	// Read testdata
+	data, err := os.ReadFile(
+		"testdata/stone_references.json",
+	)
+	if err != nil {
+		t.Fatalf("The test failed when reading file due to %s", err)
+	}
+	// Start the mockserver
 	mockServer := httptest.NewServer(
 		http.HandlerFunc(
 			func(w http.ResponseWriter, r *http.Request) {
 				w.Header().Set("Content-Type", "application/json")
-				w.Write([]byte(stone_text))
+				w.Write(data)
 			},
 		),
 	)
 	defer mockServer.Close()
-	_, err := GetWikiReferences(
+	// Start testing
+	_, err = GetWikiReferences(
 		mockServer.URL,
 		"modzilla/5.0",
 		3,

@@ -41,6 +41,6 @@ func TestRequesting(t *testing.T) {
 	)
 	// Check for errors
 	if err != nil {
-		t.Errorf("Error: %s", err)
+		t.Fatalf("Error: %s", err)
 	}
 }

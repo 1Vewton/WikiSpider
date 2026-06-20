@@ -1,0 +1,19 @@
+{
+  "batchcomplete": "",
+  "query": {
+    "normalized": [
+      {
+        "from": "San_Francisco",
+        "to": "San Francisco"
+      }
+    ],
+    "pages": {
+      "49728": {
+        "pageid": 49728,
+        "ns": 0,
+		"title": "San Francisco",
+		"extract": "..."
+	  }
+	}
+  }
+}
