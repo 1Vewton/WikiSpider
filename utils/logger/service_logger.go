@@ -10,21 +10,21 @@ type ServiceLogger struct {
 }
 
 // Return logger
-func NewLogger(service_name string) ServiceLogger {
+func NewLogger(service_name string) *ServiceLogger {
 	var new_logger ServiceLogger
 	new_logger.service_name = service_name
-	return new_logger
+	return &new_logger
 }
 
 // Info
-func (s ServiceLogger) Info(msg string) {
+func (s *ServiceLogger) Info(msg string) {
 	if logger != nil {
 		logger.Info(fmt.Sprintf("%s: %s", s.service_name, msg))
 	}
 }
 
 // Error
-func (s ServiceLogger) Error(msg string) {
+func (s *ServiceLogger) Error(msg string) {
 	if logger != nil {
 		logger.Error(fmt.Sprintf("%s: %s", s.service_name, msg))
 	}
