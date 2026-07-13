@@ -4,9 +4,11 @@ import (
 	"context"
 	"errors"
 
+	"github.com/1Vewton/WikiSpider/embedder"
 	"github.com/1Vewton/WikiSpider/utils/logger"
 	"github.com/openai/openai-go/v3"
 	"github.com/openai/openai-go/v3/option"
+	"golang.org/x/sync/errgroup"
 )
 
 var serviceLogger = logger.NewLogger("Embedder")
@@ -39,21 +41,21 @@ func NewOpenAIEmbedder(
 }
 
 // Embed embeds single text
-func (embedder *OpenAIEmbedder) Embed(
+func (oaiEmbedder *OpenAIEmbedder) Embed(
 	ctx context.Context,
 	text string,
 ) ([]float64, error) {
 	totalRetries := 0
 	var embedResult *openai.CreateEmbeddingResponse
-	for totalRetries < embedder.retryCount {
-		result, err := embedder.client.Embeddings.New(
+	for totalRetries < oaiEmbedder.retryCount {
+		result, err := oaiEmbedder.client.Embeddings.New(
 			ctx,
 			openai.EmbeddingNewParams{
 				Input: openai.EmbeddingNewParamsInputUnion{
 					OfString: openai.String(text),
 				},
-				Model:          embedder.model,
-				Dimensions:     openai.Int(embedder.dimension),
+				Model:          oaiEmbedder.model,
+				Dimensions:     openai.Int(oaiEmbedder.dimension),
 				EncodingFormat: openai.EmbeddingNewParamsEncodingFormatFloat,
 			},
 		)
@@ -72,4 +74,49 @@ func (embedder *OpenAIEmbedder) Embed(
 		return nil, errors.New("The model returns nothing")
 	}
 	return embedResult.Data[0].Embedding, nil
+}
+
+// EmbedAll embeds multiple texts
+func (oaiEmbedder *OpenAIEmbedder) EmbedAll(
+	ctx context.Context,
+	texts []string,
+) ([]embedder.EmbeddingResult, error) {
+	resultChan := make(chan embedder.EmbeddingResult, len(texts))
+	group, ctx := errgroup.WithContext(ctx)
+	for _, text := range texts {
+		tempText := text
+		group.Go(
+			func() error {
+				result, err := oaiEmbedder.Embed(
+					ctx,
+					tempText,
+				)
+				if err != nil {
+					return err
+				}
+				embedResult := embedder.EmbeddingResult{
+					OriginalText: tempText,
+					Vector:       result,
+				}
+				select {
+				case resultChan <- embedResult:
+					return nil
+				default:
+					return errors.New("The length of the channel is too large")
+				}
+			},
+		)
+	}
+	if err := group.Wait(); err != nil {
+		return nil, err
+	}
+	var results []embedder.EmbeddingResult = make(
+		[]embedder.EmbeddingResult,
+		0,
+	)
+	close(resultChan)
+	for result := range resultChan {
+		results = append(results, result)
+	}
+	return results, nil
 }
