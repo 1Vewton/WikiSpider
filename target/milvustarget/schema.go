@@ -20,14 +20,51 @@ func CreateDefaultMilvusSchema() *DefaultMilvusSchema {
 
 // GetSchema returns the schema by default
 func GetSchema() *entity.Schema {
+	function := entity.NewFunction().
+		WithName("text_bm25_emb").
+		WithInputFields("original_text").
+		WithOutputFields("text_sparse").
+		WithType(entity.FunctionTypeBM25)
 	schema := entity.NewSchema()
-	schema.WithField(entity.NewField().WithName("DocumentID").
-		WithDataType(entity.FieldTypeString).
-		WithIsPrimaryKey(true).
-		WithIsAutoID(false),
-	)
-	schema.WithField(entity.NewField().WithName("Source").
-		WithDataType(entity.FieldTypeString),
+	schema.WithField(
+		// Document id
+		entity.NewField().
+			WithName("document_id").
+			WithDataType(entity.FieldTypeVarChar).
+			WithMaxLength(1000).
+			WithIsPrimaryKey(true).
+			WithIsAutoID(false),
+	).WithField(
+		// Source URL
+		entity.NewField().
+			WithName("source_url").
+			WithMaxLength(5000).
+			WithDataType(entity.FieldTypeString),
+	).WithField(
+		// Original TExt
+		entity.NewField().
+			WithName("original_text").
+			WithMaxLength(5000).
+			WithDataType(entity.FieldTypeString),
+	).WithField(
+		// Title
+		entity.NewField().
+			WithName("title").
+			WithMaxLength(5000).
+			WithDataType(entity.FieldTypeString),
+	).WithField(
+		// Sparse Vector
+		entity.NewField().
+			WithName("text_sparce").
+			WithDataType(entity.FieldTypeSparseVector),
+	).WithField(
+		// Dense Vector
+		entity.NewField().
+			WithName("text_dense").
+			WithDataType(entity.FieldTypeFloatVector).
+			WithDim(1024),
+	).WithFunction(
+		function,
 	)
 	return schema
 }
