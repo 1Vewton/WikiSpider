@@ -12,7 +12,9 @@ type Settings struct {
 	embedding_model_name     *string // embedding model name
 	embedding_model_base_url *string // embedding model base url
 	embedding_model_api_key  *string // api key of the embedding model
-	targetDatabaseURL        *string //url of the target database
+	targetDatabaseURL        *string // url of the target database
+	targetDatabaseUserName   *string // username of the databse
+	targetDatabasePassword   *string // password of the database
 }
 
 var settings Settings
@@ -132,4 +134,24 @@ func GetTargetDatabaseURL() string {
 		&settings.targetDatabaseURL,
 	)
 	return *settings.targetDatabaseURL
+}
+
+// GetTargetDatabaseUserName gets the user name of the target database
+func GetTargetDatabaseUserName() string {
+	SetEnvString(
+		"TARGET_DATABASE_USERNAME",
+		"",
+		&settings.targetDatabaseUserName,
+	)
+	return *settings.targetDatabaseUserName
+}
+
+// GetTargetDatabasePassword gets the password for the target database
+func GetTargetDatabasePassword() string {
+	SetEnvString(
+		"TARGET_DATABASE_PASSWORD",
+		"",
+		&settings.targetDatabasePassword,
+	)
+	return *settings.targetDatabasePassword
 }
