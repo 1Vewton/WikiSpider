@@ -12,6 +12,7 @@ type Settings struct {
 	embedding_model_name     *string // embedding model name
 	embedding_model_base_url *string // embedding model base url
 	embedding_model_api_key  *string // api key of the embedding model
+	targetDatabaseURL        *string //url of the target database
 }
 
 var settings Settings
@@ -121,4 +122,14 @@ func GetEmbeddingBaseURL() string {
 		&settings.embedding_model_base_url,
 	)
 	return *settings.embedding_model_base_url
+}
+
+// GetTargetDatabaseURL gets the url of target database
+func GetTargetDatabaseURL() string {
+	SetEnvString(
+		"TARGET_DATABASE_URL",
+		"",
+		&settings.targetDatabaseURL,
+	)
+	return *settings.targetDatabaseURL
 }
