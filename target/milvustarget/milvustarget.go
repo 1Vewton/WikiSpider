@@ -9,11 +9,12 @@ import (
 
 // MilvusTarget defines the target of the milvus
 type MilvustTarget struct {
-	databaseURL string
-	userName    string
-	password    string
-	dataBase    string
-	client      *milvusclient.Client
+	databaseURL    string
+	userName       string
+	password       string
+	dataBase       string
+	client         *milvusclient.Client
+	databaseSchema *MilvusSchema
 }
 
 // CreateMilvusTarget creates a milvus target
@@ -22,12 +23,14 @@ func CreateMilvusTarget(
 	userName string,
 	password string,
 	dataBase string,
+	databaseSchema *MilvusSchema,
 ) *MilvustTarget {
 	return &MilvustTarget{
-		databaseURL: databaseURL,
-		userName:    userName,
-		password:    password,
-		dataBase:    dataBase,
+		databaseURL:    databaseURL,
+		userName:       userName,
+		password:       password,
+		dataBase:       dataBase,
+		databaseSchema: databaseSchema,
 	}
 }
 
