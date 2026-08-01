@@ -2,19 +2,25 @@ package milvustarget
 
 import (
 	"context"
+	"fmt"
 	"time"
 
+	"github.com/milvus-io/milvus/client/v2/entity"
 	"github.com/milvus-io/milvus/client/v2/milvusclient"
 )
 
 // MilvusTarget defines the target of the milvus
-type MilvustTarget struct {
+type MilvusTarget struct {
 	databaseURL    string
 	userName       string
 	password       string
 	dataBase       string
+	collectionName string
 	client         *milvusclient.Client
-	databaseSchema *MilvusSchema
+	createSchema   func(collectionName string) (
+		*entity.Schema,
+		[]milvusclient.CreateIndexOption,
+	)
 }
 
 // CreateMilvusTarget creates a milvus target
@@ -23,19 +29,24 @@ func CreateMilvusTarget(
 	userName string,
 	password string,
 	dataBase string,
-	databaseSchema *MilvusSchema,
-) *MilvustTarget {
-	return &MilvustTarget{
+	collectionName string,
+	createSchema func(collectionName string) (
+		*entity.Schema,
+		[]milvusclient.CreateIndexOption,
+	),
+) *MilvusTarget {
+	return &MilvusTarget{
 		databaseURL:    databaseURL,
 		userName:       userName,
 		password:       password,
 		dataBase:       dataBase,
-		databaseSchema: databaseSchema,
+		collectionName: collectionName,
+		createSchema:   createSchema,
 	}
 }
 
 // Connect connects to the milvus server, timeout is setted
-func (target *MilvustTarget) Connect(
+func (target *MilvusTarget) Connect(
 	ctx context.Context,
 	timeout time.Duration,
 ) error {
@@ -91,4 +102,36 @@ func (target *MilvustTarget) Connect(
 	}
 	target.client = cli
 	return nil
+}
+
+// InitializeSchema initializes the schema of the database and creates collection
+func (target *MilvusTarget) InitializeSchema(
+	ctx context.Context,
+) error {
+	// List collections
+	resCollections, errListCollection := target.client.ListCollections(
+		ctx,
+		milvusclient.NewListCollectionOption(),
+	)
+	if errListCollection != nil {
+		return errListCollection
+	}
+	for _, clientName := range resCollections {
+		if clientName == target.collectionName {
+			return fmt.Errorf(
+				"This client %s already exists",
+				target.collectionName,
+			)
+		}
+	}
+	// Create collection
+	schema, indexOptions := target.createSchema(target.collectionName)
+	errCreateCollection := target.client.CreateCollection(
+		ctx,
+		milvusclient.NewCreateCollectionOption(
+			target.collectionName,
+			schema,
+		).WithIndexOptions(indexOptions...),
+	)
+	return errCreateCollection
 }

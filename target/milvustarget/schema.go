@@ -2,6 +2,8 @@ package milvustarget
 
 import (
 	"github.com/milvus-io/milvus/client/v2/entity"
+	"github.com/milvus-io/milvus/client/v2/index"
+	"github.com/milvus-io/milvus/client/v2/milvusclient"
 )
 
 // MilvusSchema defines the way of creating schema and upload to the database
@@ -18,8 +20,8 @@ func CreateDefaultMilvusSchema() *DefaultMilvusSchema {
 	return &DefaultMilvusSchema{}
 }
 
-// GetSchema returns the schema by default
-func GetSchema() *entity.Schema {
+// GetDefaultSchema returns the schema by default
+func GetDefaultSchema(collectionName string) (*entity.Schema, []milvusclient.CreateIndexOption) {
 	function := entity.NewFunction().
 		WithName("text_bm25_emb").
 		WithInputFields("original_text").
@@ -55,7 +57,7 @@ func GetSchema() *entity.Schema {
 	).WithField(
 		// Sparse Vector
 		entity.NewField().
-			WithName("text_sparce").
+			WithName("text_sparse").
 			WithDataType(entity.FieldTypeSparseVector),
 	).WithField(
 		// Dense Vector
@@ -66,5 +68,22 @@ func GetSchema() *entity.Schema {
 	).WithFunction(
 		function,
 	)
-	return schema
+	indexOptions := []milvusclient.CreateIndexOption{
+		milvusclient.NewCreateIndexOption(
+			collectionName,
+			"text_dense",
+			index.NewAutoIndex(
+				index.MetricType(entity.IP),
+			),
+		),
+		milvusclient.NewCreateIndexOption(
+			collectionName,
+			"text_sparse",
+			index.NewSparseInvertedIndex(
+				entity.BM25,
+				0.2,
+			),
+		),
+	}
+	return schema, indexOptions
 }
