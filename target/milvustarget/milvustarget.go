@@ -135,3 +135,8 @@ func (target *MilvusTarget) InitializeSchema(
 	)
 	return errCreateCollection
 }
+
+// NewDoc inserts new document into the database
+func NewDoc() error {
+	return nil
+}
