@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/1Vewton/WikiSpider/utils"
 	"github.com/milvus-io/milvus/client/v2/entity"
 	"github.com/milvus-io/milvus/client/v2/milvusclient"
 )
@@ -134,6 +135,24 @@ func (target *MilvusTarget) InitializeSchema(
 		).WithIndexOptions(indexOptions...),
 	)
 	return errCreateCollection
+}
+
+// CheckFields checks whether certain field has certain value.
+// Return error if there are certain field in the database has certain value.
+func (target *MilvusTarget) CheckFields(
+	data any,
+	fields ...string,
+) error {
+	for _, field := range fields {
+		_, errGetField := utils.GetValueFromFieldByString(
+			data,
+			field,
+		)
+		if errGetField != nil {
+			return errGetField
+		}
+	}
+	return nil
 }
 
 // NewDoc inserts new document into the database
