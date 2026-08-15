@@ -105,6 +105,11 @@ func (target *MilvusTarget) Connect(
 	return nil
 }
 
+// IfValueExists checks if the value exists in the target database
+func (target *MilvusTarget) IfValueExists() error {
+	return nil
+}
+
 // InitializeSchema initializes the schema of the database and creates collection
 func (target *MilvusTarget) InitializeSchema(
 	ctx context.Context,
