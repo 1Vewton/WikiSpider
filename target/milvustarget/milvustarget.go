@@ -8,6 +8,7 @@ import (
 	"github.com/1Vewton/WikiSpider/utils"
 	"github.com/milvus-io/milvus/client/v2/entity"
 	"github.com/milvus-io/milvus/client/v2/milvusclient"
+	"golang.org/x/sync/errgroup"
 )
 
 // MilvusTarget defines the target of the milvus
@@ -18,7 +19,9 @@ type MilvusTarget struct {
 	dataBase       string
 	collectionName string
 	client         *milvusclient.Client
+	primaryField   string
 	createSchema   func(collectionName string) (
+		string,
 		*entity.Schema,
 		[]milvusclient.CreateIndexOption,
 	)
@@ -32,6 +35,7 @@ func CreateMilvusTarget(
 	dataBase string,
 	collectionName string,
 	createSchema func(collectionName string) (
+		string,
 		*entity.Schema,
 		[]milvusclient.CreateIndexOption,
 	),
@@ -106,8 +110,34 @@ func (target *MilvusTarget) Connect(
 }
 
 // IfValueExists checks if the value exists in the target database
-func (target *MilvusTarget) IfValueExists() error {
-	return nil
+func (target *MilvusTarget) IfValueExists(
+	ctx context.Context,
+	field string,
+	value any,
+) (bool, error) {
+	queryResult, errQuery := target.client.Query(
+		ctx,
+		milvusclient.NewQueryOption(
+			target.collectionName,
+		).WithFilter(
+			CreateQueryTextString(
+				field,
+				value,
+			),
+		).WithOutputFields(
+			target.primaryField,
+		),
+	)
+	if errQuery != nil {
+		return false, errQuery
+	}
+	ids := queryResult.GetColumn(
+		target.primaryField,
+	).FieldData().GetScalars().GetArrayData().Data
+	if len(ids) > 0 {
+		return true, nil
+	}
+	return false, nil
 }
 
 // InitializeSchema initializes the schema of the database and creates collection
@@ -131,7 +161,10 @@ func (target *MilvusTarget) InitializeSchema(
 		}
 	}
 	// Create collection
-	schema, indexOptions := target.createSchema(target.collectionName)
+	primaryField, schema, indexOptions := target.createSchema(
+		target.collectionName,
+	)
+	target.primaryField = primaryField
 	errCreateCollection := target.client.CreateCollection(
 		ctx,
 		milvusclient.NewCreateCollectionOption(
@@ -142,22 +175,58 @@ func (target *MilvusTarget) InitializeSchema(
 	return errCreateCollection
 }
 
+// TmpResult stores the result for checking field
+type TmpResult struct {
+	Field  string
+	Exists bool
+}
+
 // CheckFields checks whether certain field has certain value.
-// Return error if there are certain field in the database has certain value.
+// Return true if there are certain field in the database has certain value.
 func (target *MilvusTarget) CheckFields(
+	ctx context.Context,
 	data any,
 	fields ...string,
-) error {
+) (bool, error) {
+	resultChan := make(chan TmpResult, len(fields))
+	group, ctx := errgroup.WithContext(ctx)
 	for _, field := range fields {
-		_, errGetField := utils.GetValueFromFieldByString(
-			data,
-			field,
+		tmpField := field
+		group.Go(
+			func() error {
+				resDataInField, errGetField := utils.GetValueFromFieldByString(
+					data,
+					tmpField,
+				)
+				if errGetField != nil {
+					return errGetField
+				}
+				result, errIfValueExists := target.IfValueExists(
+					ctx,
+					tmpField,
+					resDataInField,
+				)
+				if errIfValueExists != nil {
+					return errIfValueExists
+				}
+				resultChan <- TmpResult{
+					Field:  tmpField,
+					Exists: result,
+				}
+				return nil
+			},
 		)
-		if errGetField != nil {
-			return errGetField
+	}
+	if err := group.Wait(); err != nil {
+		return true, err
+	}
+	close(resultChan)
+	for data := range resultChan {
+		if !data.Exists {
+			return false, nil
 		}
 	}
-	return nil
+	return true, nil
 }
 
 // NewDoc inserts new document into the database

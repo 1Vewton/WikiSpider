@@ -21,7 +21,11 @@ func CreateDefaultMilvusSchema() *DefaultMilvusSchema {
 }
 
 // GetDefaultSchema returns the schema by default
-func GetDefaultSchema(collectionName string) (*entity.Schema, []milvusclient.CreateIndexOption) {
+func GetDefaultSchema(collectionName string) (
+	string,
+	*entity.Schema,
+	[]milvusclient.CreateIndexOption,
+) {
 	function := entity.NewFunction().
 		WithName("text_bm25_emb").
 		WithInputFields("original_text").
@@ -85,5 +89,5 @@ func GetDefaultSchema(collectionName string) (*entity.Schema, []milvusclient.Cre
 			),
 		),
 	}
-	return schema, indexOptions
+	return "document_id", schema, indexOptions
 }

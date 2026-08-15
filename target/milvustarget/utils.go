@@ -7,7 +7,7 @@ import (
 // CreateQueryTextString creates text for query string field
 func CreateQueryTextString(
 	field string,
-	value string,
+	value any,
 ) string {
 	processedValue := fmt.Sprintf(
 		"%s%s",
