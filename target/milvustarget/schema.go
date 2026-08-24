@@ -1,10 +1,41 @@
 package milvustarget
 
 import (
+	"context"
+	"errors"
+
 	"github.com/milvus-io/milvus/client/v2/entity"
 	"github.com/milvus-io/milvus/client/v2/index"
 	"github.com/milvus-io/milvus/client/v2/milvusclient"
 )
+
+// InputData defines the data to input into the schema
+type InputData struct {
+	DocumentID   string
+	SourceURL    string
+	OriginalText string
+	Title        string
+	TextDense    []float32
+	Dim          int
+}
+
+// NewInputData creates new input data
+func NewInputData(
+	documentID string,
+	sourceURL string,
+	originalText string,
+	title string,
+	textDense []float32,
+) *InputData {
+	return &InputData{
+		DocumentID:   documentID,
+		SourceURL:    sourceURL,
+		OriginalText: originalText,
+		Title:        title,
+		TextDense:    textDense,
+		Dim:          len(textDense),
+	}
+}
 
 // MilvusSchema defines the way of creating schema and upload to the database
 type MilvusSchema interface {
@@ -45,19 +76,19 @@ func GetDefaultSchema(collectionName string) (
 		entity.NewField().
 			WithName("source_url").
 			WithMaxLength(5000).
-			WithDataType(entity.FieldTypeString),
+			WithDataType(entity.FieldTypeVarChar),
 	).WithField(
 		// Original TExt
 		entity.NewField().
 			WithName("original_text").
 			WithMaxLength(5000).
-			WithDataType(entity.FieldTypeString),
+			WithDataType(entity.FieldTypeVarChar),
 	).WithField(
 		// Title
 		entity.NewField().
 			WithName("title").
 			WithMaxLength(5000).
-			WithDataType(entity.FieldTypeString),
+			WithDataType(entity.FieldTypeVarChar),
 	).WithField(
 		// Sparse Vector
 		entity.NewField().
@@ -90,4 +121,45 @@ func GetDefaultSchema(collectionName string) (
 		),
 	}
 	return "document_id", schema, indexOptions
+}
+
+// UploadData uploads the data
+func UploadData(
+	ctx context.Context,
+	client *milvusclient.Client,
+	datas []*InputData,
+) error {
+	if len(datas) < 1 {
+		return errors.New(
+			"data array cannot have length of 0",
+		)
+	}
+	dimension := datas[0].Dim
+	// datas
+	documentIDArray := []string{}
+	sourceURLArray := []string{}
+	originalTextArray := []string{}
+	titleArray := []string{}
+	textDenseArray := [][]float32{}
+	for _, data := range datas {
+		documentIDArray = append(documentIDArray, data.DocumentID)
+		sourceURLArray = append(sourceURLArray, data.SourceURL)
+		originalTextArray = append(originalTextArray, data.OriginalText)
+		titleArray = append(titleArray, data.Title)
+		textDenseArray = append(textDenseArray, data.TextDense)
+	}
+	_, err := client.Insert(
+		ctx,
+		milvusclient.NewColumnBasedInsertOption("quick_setup").
+			WithVarcharColumn("document_id", documentIDArray).
+			WithVarcharColumn("source_url", sourceURLArray).
+			WithVarcharColumn("original_text", originalTextArray).
+			WithVarcharColumn("title", titleArray).
+			WithFloatVectorColumn(
+				"text_dense",
+				dimension,
+				textDenseArray,
+			),
+	)
+	return err
 }

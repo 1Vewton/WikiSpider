@@ -233,3 +233,10 @@ func (target *MilvusTarget) CheckFields(
 func NewDoc() error {
 	return nil
 }
+
+// Close closes the connection
+func (target *MilvusTarget) Close(
+	ctx context.Context,
+) {
+	_ = target.client.Close(ctx)
+}
