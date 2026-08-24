@@ -3,6 +3,7 @@ package milvustarget
 import (
 	"context"
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/1Vewton/WikiSpider/utils"
@@ -13,18 +14,24 @@ import (
 
 // MilvusTarget defines the target of the milvus
 type MilvusTarget struct {
-	databaseURL    string
-	userName       string
-	password       string
-	dataBase       string
-	collectionName string
-	client         *milvusclient.Client
-	primaryField   string
-	createSchema   func(collectionName string) (
+	databaseURL     string
+	userName        string
+	password        string
+	dataBase        string
+	collectionName  string
+	client          *milvusclient.Client
+	primaryField    string
+	ClientCloseOnce sync.Once
+	createSchema    func(collectionName string) (
 		string,
 		*entity.Schema,
 		[]milvusclient.CreateIndexOption,
 	)
+	uploadData func(
+		ctx context.Context,
+		client *milvusclient.Client,
+		datas []any,
+	) error
 }
 
 // CreateMilvusTarget creates a milvus target
@@ -230,7 +237,7 @@ func (target *MilvusTarget) CheckFields(
 }
 
 // NewDoc inserts new document into the database
-func NewDoc() error {
+func (target *MilvusTarget) NewDoc() error {
 	return nil
 }
 
@@ -238,5 +245,9 @@ func NewDoc() error {
 func (target *MilvusTarget) Close(
 	ctx context.Context,
 ) {
-	_ = target.client.Close(ctx)
+	target.ClientCloseOnce.Do(
+		func() {
+			_ = target.client.Close(ctx)
+		},
+	)
 }

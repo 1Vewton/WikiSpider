@@ -127,8 +127,14 @@ func GetDefaultSchema(collectionName string) (
 func UploadData(
 	ctx context.Context,
 	client *milvusclient.Client,
-	datas []*InputData,
+	rawDatas interface{},
 ) error {
+	datas, ok := rawDatas.([]*InputData)
+	if !ok {
+		return errors.New(
+			"this data is not a list of InputData",
+		)
+	}
 	if len(datas) < 1 {
 		return errors.New(
 			"data array cannot have length of 0",
