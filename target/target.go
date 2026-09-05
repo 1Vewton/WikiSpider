@@ -16,4 +16,8 @@ type Target interface {
 	Close(
 		ctx context.Context,
 	)
+	NewDoc(
+		ctx context.Context,
+		datas []any,
+	) error
 }
