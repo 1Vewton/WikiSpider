@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 
+	"github.com/1Vewton/WikiSpider/embedder/openaiembedder"
+	"github.com/google/uuid"
 	"github.com/milvus-io/milvus/client/v2/entity"
 	"github.com/milvus-io/milvus/client/v2/index"
 	"github.com/milvus-io/milvus/client/v2/milvusclient"
@@ -53,9 +55,31 @@ func NewInputDataFromMap(
 
 // StringToInputData converts string to input data
 func StringToInputData(
-	datas []string,
+	ctx context.Context,
+	embedder *openaiembedder.OpenAIEmbedder,
+	texts []string,
+	sourceURL string,
+	title string,
 ) ([]*InputData, error) {
 	result := []*InputData{}
+	embeddedChunks, err := embedder.EmbedAll(
+		ctx,
+		texts,
+	)
+	if err != nil {
+		return nil, err
+	}
+	for _, embeddedChunk := range embeddedChunks {
+		tmpID := uuid.NewString()
+		singleInputData := NewInputData(
+			tmpID,
+			sourceURL,
+			embeddedChunk.OriginalText,
+			title,
+			embeddedChunk.Vector64To32(),
+		)
+		result = append(result, singleInputData)
+	}
 	return result, nil
 }
 
