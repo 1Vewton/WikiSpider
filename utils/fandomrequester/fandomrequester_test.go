@@ -9,6 +9,7 @@ import (
 
 // Test whether the function fetches wiki text successfully
 func TestGetWikiText(t *testing.T) {
+	t.Parallel()
 	// Read testdata
 	data, err := os.ReadFile(
 		"testdata/stone_text.json",
@@ -39,6 +40,7 @@ func TestGetWikiText(t *testing.T) {
 
 // Test whether the function fetches references successfully
 func TestGetWikiReferences(t *testing.T) {
+	t.Parallel()
 	// Read testdata
 	data, err := os.ReadFile(
 		"testdata/stone_references.json",

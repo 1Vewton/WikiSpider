@@ -12,6 +12,7 @@ type TestCase struct {
 
 // Test the requesting function
 func TestRequesting(t *testing.T) {
+	t.Parallel()
 	var result TestCase
 	// Create a mock HTTP server
 	mockServer := httptest.NewServer(

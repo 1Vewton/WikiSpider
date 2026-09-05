@@ -23,7 +23,27 @@ func GetAllSuportedTypes() []DataSourceType {
 // ToString converts DataSourceType to string
 func (dataSourceType DataSourceType) ToString() string {
 	switch dataSourceType {
+	case Fandom:
+		return "fandom"
+	case Wikipedia:
+		return "wikipedia"
+	case NotSupported:
+		return "not_supported"
 	default:
 		return "not_supported"
+	}
+}
+
+// ToDataSourceType converts string to datasource type
+func ToDataSourceType(rawDataSource string) DataSourceType {
+	switch rawDataSource {
+	case "fandom":
+		return Fandom
+	case "wikipedia":
+		return Wikipedia
+	case "not_supported":
+		return NotSupported
+	default:
+		return NotSupported
 	}
 }

@@ -8,6 +8,7 @@ import (
 func TestNewInputDataFromMap(
 	t *testing.T,
 ) {
+	t.Parallel()
 	data := map[string]any{
 		"DocumentID":   "114514",
 		"SourceURL":    "abc",

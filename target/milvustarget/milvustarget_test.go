@@ -10,6 +10,7 @@ import (
 func TestQueryTextStringGeneration(
 	t *testing.T,
 ) {
+	t.Parallel()
 	QueryColor := CreateQueryTextString(
 		"color",
 		"red",
@@ -24,6 +25,7 @@ func TestQueryTextStringGeneration(
 
 // TestInterface tests whether the milvustarget can fit into milvus target
 func TestInterface(t *testing.T) {
+	t.Parallel()
 	var testTarget interface{} = &MilvusTarget{}
 	_, ok := testTarget.(target.Target)
 	if !ok {

@@ -13,6 +13,7 @@ type TestStruct struct {
 func TestGetValueFromFieldByString(
 	t *testing.T,
 ) {
+	t.Parallel()
 	testData := TestStruct{
 		Field1: "abc",
 	}

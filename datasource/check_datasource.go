@@ -14,3 +14,16 @@ func CheckContains(
 		keyword,
 	)
 }
+
+// GetDataSource for url
+func GetDataSource(
+	url string,
+) DataSourceType {
+	supported := GetAllSuportedTypes()
+	for _, supportedType := range supported {
+		if CheckContains(url, supportedType.ToString()) {
+			return supportedType
+		}
+	}
+	return NotSupported
+}

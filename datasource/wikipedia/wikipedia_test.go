@@ -8,6 +8,7 @@ import (
 
 // Test whether the WikipediaRequest implements the DataSource interface.
 func TestInterface(t *testing.T) {
+	t.Parallel()
 	var wikipedia_test interface{} = &WikipediaRequest{}
 	if _, ok := wikipedia_test.(datasource.DataSource); !ok {
 		t.Errorf("WikipediaRequest does not implement Request interface")
