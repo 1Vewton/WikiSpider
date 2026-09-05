@@ -12,4 +12,8 @@ type Target interface {
 		ctx context.Context,
 		timeout time.Duration,
 	) error
+	// Close closes the connection
+	Close(
+		ctx context.Context,
+	)
 }

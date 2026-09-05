@@ -5,6 +5,7 @@ go 1.25.8
 require (
 	github.com/joho/godotenv v1.5.1
 	github.com/milvus-io/milvus/client/v2 v2.6.5
+	github.com/mitchellh/mapstructure v1.5.0
 	github.com/openai/openai-go/v3 v3.41.0
 	golang.org/x/sync v0.22.0
 )

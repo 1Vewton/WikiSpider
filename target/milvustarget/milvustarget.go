@@ -237,8 +237,16 @@ func (target *MilvusTarget) CheckFields(
 }
 
 // NewDoc inserts new document into the database
-func (target *MilvusTarget) NewDoc() error {
-	return nil
+func (target *MilvusTarget) NewDoc(
+	ctx context.Context,
+	datas []any,
+) error {
+	err := target.uploadData(
+		ctx,
+		target.client,
+		datas,
+	)
+	return err
 }
 
 // Close closes the connection

@@ -7,9 +7,11 @@ import (
 	"github.com/milvus-io/milvus/client/v2/entity"
 	"github.com/milvus-io/milvus/client/v2/index"
 	"github.com/milvus-io/milvus/client/v2/milvusclient"
+	"github.com/mitchellh/mapstructure"
 )
 
-// InputData defines the data to input into the schema
+// InputData defines the data to input into the schema.
+// This is the default schema.
 type InputData struct {
 	DocumentID   string
 	SourceURL    string
@@ -35,6 +37,26 @@ func NewInputData(
 		TextDense:    textDense,
 		Dim:          len(textDense),
 	}
+}
+
+// NewInputDataFromMap creates new input data from map
+func NewInputDataFromMap(
+	data map[string]any,
+) (*InputData, error) {
+	var result *InputData
+	err := mapstructure.Decode(
+		data,
+		&result,
+	)
+	return result, err
+}
+
+// StringToInputData converts string to input data
+func StringToInputData(
+	datas []string,
+) ([]*InputData, error) {
+	result := []*InputData{}
+	return result, nil
 }
 
 // MilvusSchema defines the way of creating schema and upload to the database
@@ -127,7 +149,7 @@ func GetDefaultSchema(collectionName string) (
 func UploadData(
 	ctx context.Context,
 	client *milvusclient.Client,
-	rawDatas interface{},
+	rawDatas any,
 ) error {
 	datas, ok := rawDatas.([]*InputData)
 	if !ok {
