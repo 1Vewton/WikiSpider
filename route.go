@@ -6,7 +6,21 @@ import (
 	"github.com/1Vewton/WikiSpider/datasource"
 	"github.com/1Vewton/WikiSpider/datasource/fandom"
 	"github.com/1Vewton/WikiSpider/datasource/wikipedia"
+	"github.com/1Vewton/WikiSpider/target"
 )
+
+// NewTarget creates new target
+func NewTarget(
+	targetType target.TargetType,
+) (target.Target, error) {
+	switch targetType {
+	default:
+		return nil, fmt.Errorf(
+			"%s does not supported",
+			targetType.ToString(),
+		)
+	}
+}
 
 // NewDataSourceTask creates new data source task
 func NewDataSourceTask(

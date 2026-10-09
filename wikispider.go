@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/1Vewton/WikiSpider/datasource"
+	"github.com/1Vewton/WikiSpider/target"
 	"github.com/1Vewton/WikiSpider/ui/cmd/operations"
 	"github.com/1Vewton/WikiSpider/utils/config"
 	"github.com/1Vewton/WikiSpider/utils/logger"
@@ -61,4 +62,20 @@ func main() {
 		"The program will use data source %s\n",
 		dataSourceUsed.ToString(),
 	)
+	// Decide target
+	fmt.Println(
+		"Here are the available targets to store data: ",
+	)
+	for _, target := range target.GetAllTypes() {
+		fmt.Println(target.ToString())
+	}
+	var target string
+	fmt.Println(
+		"Input the name of the datasource you want to use: ",
+	)
+	_, err := fmt.Scan(&target)
+	if err != nil {
+		service_logger.Error(err.Error())
+		panic(err.Error())
+	}
 }
