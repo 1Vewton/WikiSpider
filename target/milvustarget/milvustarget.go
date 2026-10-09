@@ -45,7 +45,11 @@ func CreateMilvusTarget(
 		string,
 		*entity.Schema,
 		[]milvusclient.CreateIndexOption,
-	),
+	), uploadData func(
+		ctx context.Context,
+		client *milvusclient.Client,
+		datas []any,
+	) error,
 ) *MilvusTarget {
 	return &MilvusTarget{
 		databaseURL:    databaseURL,
@@ -54,6 +58,7 @@ func CreateMilvusTarget(
 		dataBase:       dataBase,
 		collectionName: collectionName,
 		createSchema:   createSchema,
+		uploadData:     uploadData,
 	}
 }
 

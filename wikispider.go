@@ -49,6 +49,13 @@ func main() {
 			service_logger.Error(err.Error())
 			panic(err)
 		}
+		dataSourceUsed = datasource.ToDataSourceType(
+			selectedDataSource,
+		)
+	}
+	if dataSourceUsed == datasource.NotSupported {
+		service_logger.Error("data source not supported!")
+		panic("data source not supported!")
 	}
 	fmt.Printf(
 		"The program will use data source %s\n",
